@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
     }
     buildTypes {
         release {
@@ -23,13 +23,13 @@ project.ext {
     playServiceVersion = "8.3.0"
 
     bintrayRepo = 'maven'
-    bintrayName = 'hhhanxf'
+    bintrayName = 'FlowLayoutManager'
 
-    publishedGroupId = 'com.github.xiaofeng-han'
-    libraryName = 'flowlayoutmanager'
+    publishedGroupId = 'com.xiaofeng.android'
+    libraryName = 'FlowLayoutManager'
     artifact = 'flowlayoutmanager'
 
-    libraryDescription = 'A LayoutManager for RecyclerView to support flow layout'
+    libraryDescription = 'A RecyclerView LayoutManager that support flow layout and predictive animations'
 
     siteUrl = 'https://github.com/xiaofeng-han/flowlayoutmanager'
     gitUrl = 'https://github.com/xiaofeng-han/flowlayoutmanager.git'
