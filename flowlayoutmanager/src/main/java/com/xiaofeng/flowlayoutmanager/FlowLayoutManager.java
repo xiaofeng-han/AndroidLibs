@@ -70,15 +70,20 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
 		recyclerRef = recycler;
 		if (state.isPreLayout()) {
-			onPreLayoutChildren(recycler);
+			onPreLayoutChildren(recycler, state);
 		} else {
 			onRealLayoutChildren(recycler);
 		}
 	}
 
-	private void onPreLayoutChildren(RecyclerView.Recycler recycler) {
+	private void onPreLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+
 		// start from first view child
 		int firstItemAdapterPosition = getChildAdapterPosition(0);
+		if (firstItemAdapterPosition == RecyclerView.NO_POSITION) {
+			detachAndScrapAttachedViews(recycler);
+			return;
+		}
 		int currentItemPosition = firstItemAdapterPosition < 0 ? 0 : firstItemAdapterPosition;
 		Point point = layoutStartPoint(LayoutContext.fromLayoutOptions(flowLayoutOptions));
 		int x = point.x, y = point.y, height = 0;
@@ -98,7 +103,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 		// track before removed and after removed layout in same time, to make sure only add items at
 		// bottom that visible after item removed.
-		while (currentItemPosition < getItemCount()) {
+		while (currentItemPosition < state.getItemCount()) {
 			View child = recycler.getViewForPosition(currentItemPosition);
 			boolean childRemoved = isChildRemoved(child);
 			// act as removed view still there, to calc new items location.
@@ -484,6 +489,9 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	}
 
 	private int getChildAdapterPosition(View child) {
+		if (child == null) {
+			return RecyclerView.NO_POSITION;
+		}
 		return ((RecyclerView.LayoutParams)child.getLayoutParams()).getViewAdapterPosition();
 	}
 
