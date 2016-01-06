@@ -3,6 +3,7 @@ package com.xiaofeng.androidlibs;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,9 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.xiaofeng.flowlayoutmanager.FlowLayoutManager;
+
 public class MainActivity extends AppCompatActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
+	RecyclerView recyclerView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
+		init();
 	}
 
 	@Override
@@ -69,7 +74,16 @@ public class MainActivity extends AppCompatActivity
 		//noinspection SimplifiableIfStatement
 		if (id == R.id.action_settings) {
 			return true;
+		} else if (id == R.id.two_per_line) {
+			FlowLayoutManager flowLayoutManager = (FlowLayoutManager)recyclerView.getLayoutManager();
+			flowLayoutManager.maxItemsPerLine(2);
+			recyclerView.getAdapter().notifyItemRangeChanged(0, recyclerView.getAdapter().getItemCount());
+		} else if (id == R.id.remove_item_limit) {
+			FlowLayoutManager flowLayoutManager = (FlowLayoutManager)recyclerView.getLayoutManager();
+			flowLayoutManager.maxItemsPerLine(FlowLayoutManager.FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT);
+			recyclerView.getAdapter().notifyItemRangeChanged(0, recyclerView.getAdapter().getItemCount());
 		}
+
 
 		return super.onOptionsItemSelected(item);
 	}
@@ -97,5 +111,11 @@ public class MainActivity extends AppCompatActivity
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawer.closeDrawer(GravityCompat.START);
 		return true;
+	}
+
+	private void init() {
+		recyclerView = (RecyclerView) findViewById(R.id.list);
+		recyclerView.setLayoutManager(new FlowLayoutManager());
+		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(200, 3, 13)));
 	}
 }
