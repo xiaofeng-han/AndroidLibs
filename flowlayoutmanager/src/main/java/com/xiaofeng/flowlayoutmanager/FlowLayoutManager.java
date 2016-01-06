@@ -5,6 +5,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -19,6 +20,10 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	enum Alignment {
 		LEFT,
 		RIGHT
+	}
+	public interface ViewCacheUpdateCallback {
+		boolean shouldUpdate(int position);
+		int alterPosition(int position);
 	}
 
 	public static class FlowLayoutOptions {
@@ -55,7 +60,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	RecyclerView.Recycler recyclerRef;
 	FlowLayoutOptions flowLayoutOptions;
 	FlowLayoutOptions newFlowLayoutOptions;
-
+	SparseArray<Rect> viewSizeCache = new SparseArray<>();
 	public FlowLayoutManager() {
 		flowLayoutOptions = new FlowLayoutOptions();
 		newFlowLayoutOptions = FlowLayoutOptions.clone(flowLayoutOptions);
@@ -213,6 +218,70 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	public void onItemsChanged(RecyclerView recyclerView) {
 		this.flowLayoutOptions = FlowLayoutOptions.clone(newFlowLayoutOptions);
 		super.onItemsChanged(recyclerView);
+	}
+
+	@Override
+	public void onItemsAdded(RecyclerView recyclerView, final int positionStart, final int itemCount) {
+		super.onItemsAdded(recyclerView, positionStart, itemCount);
+		updateViewCache(new ViewCacheUpdateCallback() {
+			@Override
+			public boolean shouldUpdate(int position) {
+				return position >= positionStart;
+			}
+
+			@Override
+			public int alterPosition(int position) {
+				return position + itemCount;
+			}
+		});
+	}
+
+	private void updateViewCache(ViewCacheUpdateCallback updateCallback) {
+		SparseArray<Rect> temp = new SparseArray<>();
+		for (int i = 0; i < viewSizeCache.size(); i ++) {
+			int key = viewSizeCache.keyAt(i);
+			if (updateCallback.shouldUpdate(key)) {
+				temp.append(updateCallback.alterPosition(key), viewSizeCache.get(key));
+				viewSizeCache.remove(key);
+			}
+		}
+
+		for (int i = 0; i < temp.size(); i ++) {
+			int tmpKey = temp.keyAt(i);
+			viewSizeCache.append(tmpKey, temp.get(tmpKey));
+		}
+		temp.clear();
+	}
+
+	@Override
+	public void onItemsRemoved(RecyclerView recyclerView, final int positionStart, final int itemCount) {
+		super.onItemsRemoved(recyclerView, positionStart, itemCount);
+		updateViewCache(new ViewCacheUpdateCallback() {
+			@Override
+			public boolean shouldUpdate(int position) {
+				return position >= positionStart;
+			}
+
+			@Override
+			public int alterPosition(int position) {
+				return position - itemCount;
+			}
+		});
+	}
+
+	@Override
+	public void onItemsUpdated(RecyclerView recyclerView, int positionStart, int itemCount) {
+		super.onItemsUpdated(recyclerView, positionStart, itemCount);
+	}
+
+	@Override
+	public void onItemsUpdated(RecyclerView recyclerView, int positionStart, int itemCount, Object payload) {
+		super.onItemsUpdated(recyclerView, positionStart, itemCount, payload);
+	}
+
+	@Override
+	public void onItemsMoved(RecyclerView recyclerView, int from, int to, int itemCount) {
+		super.onItemsMoved(recyclerView, from, to, itemCount);
 	}
 
 	/**
