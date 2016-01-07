@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -112,7 +113,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 			View child = recycler.getViewForPosition(currentItemPosition);
 			boolean childRemoved = isChildRemoved(child);
 			// act as removed view still there, to calc new items location.
-			newline = calcChildLayoutRect(child, x, y, height, beforeContext, rect);
+			newline = calcChildLayoutRect(child, x, y, height, beforeContext, rect, true);
 			if (newline) {
 				point = startNewline(rect, beforeContext);
 				x = point.x;
@@ -126,7 +127,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 			}
 
 			if (!childRemoved) {
-				real_newline = calcChildLayoutRect(child, real_x, real_y, real_height, afterContext, real_rect);
+				real_newline = calcChildLayoutRect(child, real_x, real_y, real_height, afterContext, real_rect, true);
 				if (real_newline) {
 					point = startNewline(real_rect, afterContext);
 					real_x = point.x;
@@ -168,7 +169,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
 		for (int i = firstChildAdapterPosition; i < itemCount; i ++) {
 			View child = recycler.getViewForPosition(i);
-			newLine = calcChildLayoutRect(child, x, y, height, layoutContext, rect);
+			newLine = calcChildLayoutRect(child, x, y, height, layoutContext, rect, true);
 			if (!childVisible(rect)) {
 				recycler.recycleView(child);
 				return;
@@ -413,7 +414,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		while (currentAdapterPosition <= endAdapterPosition) {
 			View newChild = recycler.getViewForPosition(currentAdapterPosition);
 
-			newline = calcChildLayoutRect(newChild, x, 0, height, layoutContext, rect);
+			newline = calcChildLayoutRect(newChild, x, 0, height, layoutContext, rect, false);
 
 			// add view told, lineChildren.size());
 			if (newline && !firstItem) {
@@ -441,8 +442,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
 		for (int i = 0; i < lineChildren.size(); i ++) {
 			View childView = recycler.getViewForPosition(lineChildren.get(i));
-			addView(childView);
-			newline = calcChildLayoutRect(childView, x, y, height, layoutContext, rect);
+			addView(childView, i);
+			newline = calcChildLayoutRect(childView, x, y, height, layoutContext, rect, true);
 			if (newline && firstItem) {
 				int rectHeight = rect.height();
 				rect.top -= rectHeight;
@@ -474,7 +475,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		while (currentAdapterPosition <= endAdapterPosition) {
 			View newChild = recycler.getViewForPosition(currentAdapterPosition);
 
-			newline = calcChildLayoutRect(newChild, x, 0, height, layoutContext, rect);
+			newline = calcChildLayoutRect(newChild, x, 0, height, layoutContext, rect, true);
 
 			// add view to make sure not be recycled.
 			addView(newChild, lineChildren.size());
@@ -506,7 +507,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
 		for (int i = 0; i < lineChildren.size(); i ++) {
 			View childView = lineChildren.get(i);
-			newline = calcChildLayoutRect(childView, x, y, height, layoutContext, rect);
+			newline = calcChildLayoutRect(childView, x, y, height, layoutContext, rect, true);
 			if (newline && firstItem) {
 				int rectHeight = rect.height();
 				rect.top -= rectHeight;
@@ -534,7 +535,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
 		while (childAdapterPosition < getItemCount()) {
 			View newChild = recycler.getViewForPosition(childAdapterPosition);
-			newline = calcChildLayoutRect(newChild, x, y, 0, layoutContext, rect);
+			newline = calcChildLayoutRect(newChild, x, y, 0, layoutContext, rect, true);
 			if (newline && !firstItem) {
 				recycler.recycleView(newChild);
 				layoutContext.currentLineItemCount = 1;
@@ -713,7 +714,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 				LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
 				while (targetAdapterPosition != adapterPosition) {
 					View nextChild = recycler.getViewForPosition(targetAdapterPosition);
-					newline = calcChildLayoutRect(nextChild, x, y, height, layoutContext, rect);
+					newline = calcChildLayoutRect(nextChild, x, y, height, layoutContext, rect, true);
 					if (newline) {
 						x = advanceInSameLine(layoutStartPoint().x, rect, layoutContext);
 						y = rect.top;
@@ -786,16 +787,29 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 	/*****************alignment related functions*****************/
 	private boolean calcChildLayoutRect(View child, int x, int y, int lineHeight, Rect rect) {
-		return calcChildLayoutRect(child, x, y, lineHeight, LayoutContext.fromLayoutOptions(flowLayoutOptions), rect);
+		return calcChildLayoutRect(child, x, y, lineHeight, LayoutContext.fromLayoutOptions(flowLayoutOptions), rect, true);
 	}
-	private boolean calcChildLayoutRect(View child, int x, int y, int lineHeight, LayoutContext layoutContext, Rect rect) {
+	private boolean calcChildLayoutRect(View child, int x, int y, int lineHeight, LayoutContext layoutContext, Rect rect, boolean measureAnyway) {
 		boolean newLine;
 		int position = getChildAdapterPosition(child);
-		int childWidth, childHeight;
-		measureChildWithMargins(child, 0, 0);
-		childWidth = getDecoratedMeasuredWidth(child);
-		childHeight = getDecoratedMeasuredHeight(child);
-		viewSizeCache.append(position, new Rect(0, 0, childWidth, childHeight));
+		int childWidth = 0, childHeight = 0;
+		boolean cached = viewSizeCache.indexOfKey(position) >= 0;
+		if (cached) {
+			Rect cachedSize = viewSizeCache.get(position);
+			childWidth = cachedSize.width();
+			childHeight = cachedSize.height();
+			if (measureAnyway) {
+				measureChildWithMargins(child, 0, 0);
+				childWidth = getDecoratedMeasuredWidth(child);
+				childHeight = getDecoratedMeasuredHeight(child);
+				viewSizeCache.append(position, new Rect(0, 0, childWidth, childHeight));
+			}
+		} else {
+			measureChildWithMargins(child, 0, 0);
+			childWidth = getDecoratedMeasuredWidth(child);
+			childHeight = getDecoratedMeasuredHeight(child);
+			viewSizeCache.append(position, new Rect(0, 0, childWidth, childHeight));
+		}
 		switch (layoutContext.layoutOptions.alignment) {
 			case RIGHT:
 				if (shouldStartNewline(x, childWidth, layoutContext)) {
