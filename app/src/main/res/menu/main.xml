@@ -12,4 +12,7 @@
     <item
         android:id="@+id/remove_item_limit"
         android:title="Remove item per line count"/>
+    <item
+        android:id="@+id/move_middle"
+        android:title="Move item in middle"/>
 </menu>

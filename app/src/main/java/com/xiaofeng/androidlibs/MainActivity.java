@@ -82,6 +82,14 @@ public class MainActivity extends AppCompatActivity
 			FlowLayoutManager flowLayoutManager = (FlowLayoutManager)recyclerView.getLayoutManager();
 			flowLayoutManager.maxItemsPerLine(FlowLayoutManager.FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT);
 			recyclerView.getAdapter().notifyItemRangeChanged(0, recyclerView.getAdapter().getItemCount());
+		} else if (id == R.id.move_middle) {
+			View firstChild = recyclerView.getChildAt(0);
+			int firstPosition = recyclerView.getChildAdapterPosition(firstChild);
+			View lastChild = recyclerView.getChildAt(recyclerView.getChildCount() - 1);
+			int lastPosition = recyclerView.getChildAdapterPosition(lastChild);
+			int from = (lastPosition - firstPosition) / 2;
+			int to = (lastPosition - firstPosition) / 4;
+			((TagAdapter)recyclerView.getAdapter()).move(from, to);
 		}
 
 

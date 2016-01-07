@@ -297,8 +297,10 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		SparseArray<Rect> temp = new SparseArray<>();
 		for (int i = 0; i < itemCount; i ++) {
 			int currentPosition = from + i;
-			temp.append(currentPosition + (to - from), viewSizeCache.get(currentPosition));
-			viewSizeCache.remove(currentPosition);
+			if (viewSizeCache.indexOfKey(currentPosition) >= 0) {
+				temp.append(currentPosition + (to - from), viewSizeCache.get(currentPosition));
+				viewSizeCache.remove(currentPosition);
+			}
 		}
 
 		final int start = movingForward ? from + itemCount : from - steps;
@@ -389,6 +391,68 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		return actualDy;
 	}
 
+	private boolean cacheGoodForAdapterPositionAndBefore(int position) {
+		for (int i = 0; i <= position; i ++) {
+			if (viewSizeCache.indexOfKey(i) < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void addNewLineAtTopUsingCache(RecyclerView.Recycler recycler) {
+		int x = layoutStartPoint().x, bottom = getDecoratedTop(getChildAt(getMaxHeightIndexInLine(0))), y;
+		int height = 0;
+		List<Integer> lineChildren = new LinkedList<>();
+		int currentAdapterPosition = 0;
+		int endAdapterPosition = getChildAdapterPosition(0) - 1;
+		Rect rect = new Rect();
+		boolean newline;
+		boolean firstItem = true;
+		LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
+		while (currentAdapterPosition <= endAdapterPosition) {
+			View newChild = recycler.getViewForPosition(currentAdapterPosition);
+
+			newline = calcChildLayoutRect(newChild, x, 0, height, layoutContext, rect);
+
+			// add view told, lineChildren.size());
+			if (newline && !firstItem) {
+				// end of one line, but not reach the top line yet. recycle the line and
+				// move on to next.
+				lineChildren.clear();
+				x = advanceInSameLine(layoutStartPoint().x, rect, layoutContext);
+				height = rect.height();
+				layoutContext.currentLineItemCount = 1;
+			} else {
+				x = advanceInSameLine(x, rect, layoutContext);
+				height = Math.max(height, rect.height());
+				firstItem = false;
+				layoutContext.currentLineItemCount ++;
+			}
+			lineChildren.add(currentAdapterPosition);
+
+			currentAdapterPosition ++;
+
+		}
+
+		x = layoutStartPoint().x;
+		y = bottom - height;
+		firstItem = true;
+		layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
+		for (int i = 0; i < lineChildren.size(); i ++) {
+			View childView = recycler.getViewForPosition(lineChildren.get(i));
+			addView(childView);
+			newline = calcChildLayoutRect(childView, x, y, height, layoutContext, rect);
+			if (newline && firstItem) {
+				int rectHeight = rect.height();
+				rect.top -= rectHeight;
+				rect.bottom -= rectHeight;
+				firstItem = false;
+			}
+			layoutDecorated(childView, rect.left, rect.top, rect.right, rect.bottom);
+			x = advanceInSameLine(x, rect, layoutContext);
+		}
+	}
 	/**
 	 * Add new line of elements at top, to keep layout, have to virtually layout from beginning.
 	 */
@@ -402,6 +466,11 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		boolean newline;
 		boolean firstItem = true;
 		LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
+
+		if (cacheGoodForAdapterPositionAndBefore(endAdapterPosition)) {
+			addNewLineAtTopUsingCache(recycler);
+			return;
+		}
 		while (currentAdapterPosition <= endAdapterPosition) {
 			View newChild = recycler.getViewForPosition(currentAdapterPosition);
 
@@ -721,9 +790,12 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	}
 	private boolean calcChildLayoutRect(View child, int x, int y, int lineHeight, LayoutContext layoutContext, Rect rect) {
 		boolean newLine;
+		int position = getChildAdapterPosition(child);
+		int childWidth, childHeight;
 		measureChildWithMargins(child, 0, 0);
-		int childWidth = getDecoratedMeasuredWidth(child);
-		int childHeight = getDecoratedMeasuredHeight(child);
+		childWidth = getDecoratedMeasuredWidth(child);
+		childHeight = getDecoratedMeasuredHeight(child);
+		viewSizeCache.append(position, new Rect(0, 0, childWidth, childHeight));
 		switch (layoutContext.layoutOptions.alignment) {
 			case RIGHT:
 				if (shouldStartNewline(x, childWidth, layoutContext)) {

@@ -43,4 +43,15 @@ public class DemoAdapter extends RecyclerView.Adapter<DemoItemHolder> {
 		items.add(0, item);
 		notifyItemInserted(0);
 	}
+
+	public void move (int from, int to) {
+		if (from > to) {
+			String item = items.remove(from);
+			items.add(to, item);
+		} else {
+			items.add(to, items.get(from));
+			items.remove(from);
+		}
+		notifyItemMoved(from, to);
+	}
 }
