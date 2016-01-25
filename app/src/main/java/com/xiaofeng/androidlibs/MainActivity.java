@@ -16,13 +16,10 @@ import android.view.MenuItem;
 
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager;
 
-import java.util.Random;
-
 public class MainActivity extends AppCompatActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
-	RecyclerView list;
-	Random random = new Random();
+	RecyclerView recyclerView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,13 +31,8 @@ public class MainActivity extends AppCompatActivity
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				DemoAdapter adapter = (DemoAdapter)list.getAdapter();
-				String newItem = Long.toString(System.currentTimeMillis());
-				int subLen = 0;
-				while (subLen == 0) {
-					subLen = random.nextInt(newItem.length());
-				}
-				adapter.insertAtBeginning(newItem.substring(0, subLen));
+				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+						.setAction("Action", null).show();
 			}
 		});
 
@@ -52,9 +44,7 @@ public class MainActivity extends AppCompatActivity
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(this);
-		list = (RecyclerView) findViewById(R.id.list);
-		list.setLayoutManager(new FlowLayoutManager());
-		list.setAdapter(new DemoAdapter());
+		init();
 	}
 
 	@Override
@@ -84,7 +74,16 @@ public class MainActivity extends AppCompatActivity
 		//noinspection SimplifiableIfStatement
 		if (id == R.id.action_settings) {
 			return true;
+		} else if (id == R.id.two_per_line) {
+			FlowLayoutManager flowLayoutManager = (FlowLayoutManager)recyclerView.getLayoutManager();
+			flowLayoutManager.maxItemsPerLine(2);
+			recyclerView.getAdapter().notifyItemRangeChanged(0, recyclerView.getAdapter().getItemCount());
+		} else if (id == R.id.remove_item_limit) {
+			FlowLayoutManager flowLayoutManager = (FlowLayoutManager)recyclerView.getLayoutManager();
+			flowLayoutManager.maxItemsPerLine(FlowLayoutManager.FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT);
+			recyclerView.getAdapter().notifyItemRangeChanged(0, recyclerView.getAdapter().getItemCount());
 		}
+
 
 		return super.onOptionsItemSelected(item);
 	}
@@ -112,5 +111,11 @@ public class MainActivity extends AppCompatActivity
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		drawer.closeDrawer(GravityCompat.START);
 		return true;
+	}
+
+	private void init() {
+		recyclerView = (RecyclerView) findViewById(R.id.list);
+		recyclerView.setLayoutManager(new FlowLayoutManager());
+		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(200, 3, 13)));
 	}
 }

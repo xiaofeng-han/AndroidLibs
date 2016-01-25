@@ -18,6 +18,7 @@ android {
         }
     }
 }
+
 project.ext {
     supportLibVersion = "23.1.1"
 }
@@ -25,8 +26,8 @@ project.ext {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile(group: 'com.android.support', name: 'recyclerview-v7', version: supportLibVersion)
-    compile(group: 'com.android.support', name: 'appcompat-v7', version: supportLibVersion)
     compile(group: 'com.android.support', name: 'design', version: supportLibVersion)
+    compile(group: 'com.android.support', name: 'appcompat-v7', version: supportLibVersion)
+    compile(group: 'com.android.support', name: 'recyclerview-v7', version: supportLibVersion)
     compile project(':flowlayoutmanager')
 }
