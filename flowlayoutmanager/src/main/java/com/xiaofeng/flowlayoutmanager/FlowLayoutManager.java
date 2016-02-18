@@ -199,7 +199,27 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 	@Override
 	public boolean canScrollVertically() {
-		return true;
+		if (getChildCount() == 0) {
+			return false;
+		}
+
+		View firstChild = getChildAt(0);
+		View lastChild = getChildAt(getChildCount() - 1);
+		View topChild = getChildAt(getMaxHeightIndexInLine(0));
+		View bottomChild = getChildAt(getMaxHeightIndexInLine(getChildCount() - 1));
+		boolean topReached = false, bottomReached = false;
+		if (getChildAdapterPosition(firstChild) == 0) {
+			if (getDecoratedTop(topChild) >= topVisibleEdge()) {
+				topReached = true;
+			}
+		}
+
+		if (getChildAdapterPosition(lastChild) == recyclerView.getAdapter().getItemCount() - 1) {
+			if (getDecoratedBottom(bottomChild) <= bottomVisibleEdge()) {
+				bottomReached = true;
+			}
+		}
+		return !(topReached && bottomReached);
 	}
 
 	@Override
@@ -208,6 +228,31 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 			return 0;
 		}
 		if (getItemCount() == 0) {
+			return 0;
+		}
+
+		View firstChild = getChildAt(0);
+		View lastChild = getChildAt(getChildCount() - 1);
+		View topChild = getChildAt(getMaxHeightIndexInLine(0));
+		View bottomChild = getChildAt(getMaxHeightIndexInLine(getChildCount() - 1));
+		boolean topReached = false, bottomReached = false;
+		if (getChildAdapterPosition(firstChild) == 0) {
+			if (getDecoratedTop(topChild) >= topVisibleEdge()) {
+				topReached = true;
+			}
+		}
+
+		if (getChildAdapterPosition(lastChild) == recyclerView.getAdapter().getItemCount() - 1) {
+			if (getDecoratedBottom(bottomChild) <= bottomVisibleEdge()) {
+				bottomReached = true;
+			}
+		}
+
+		if (dy > 0 && bottomReached) {
+			return 0;
+		}
+
+		if (dy < 0 && topReached) {
 			return 0;
 		}
 
