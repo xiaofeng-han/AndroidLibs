@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.1.1"
+        versionCode 4
+        versionName "1.1.2"
     }
     buildTypes {
         release {
@@ -37,7 +37,7 @@ project.ext {
     siteUrl = 'https://github.com/xiaofeng-han/AndroidLibs/tree/master/flowlayoutmanager'
     gitUrl = 'https://github.com/xiaofeng-han/AndroidLibs.git'
 
-    libraryVersion = '1.1.1'
+    libraryVersion = '1.1.2'
 
     developerId = 'hhhanxf'
     developerName = 'Xiaofeng Han'
