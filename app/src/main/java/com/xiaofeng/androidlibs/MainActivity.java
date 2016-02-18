@@ -116,6 +116,6 @@ public class MainActivity extends AppCompatActivity
 	private void init() {
 		recyclerView = (RecyclerView) findViewById(R.id.list);
 		recyclerView.setLayoutManager(new FlowLayoutManager());
-		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(200, 3, 13)));
+		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(1, 3, 13)));
 	}
 }
