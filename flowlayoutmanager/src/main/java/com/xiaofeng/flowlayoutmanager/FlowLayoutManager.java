@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
-	enum Alignment {
+	public enum Alignment {
 		LEFT,
 		RIGHT
 	}
