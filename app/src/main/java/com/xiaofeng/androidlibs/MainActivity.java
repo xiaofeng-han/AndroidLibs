@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -36,8 +37,13 @@ public class MainActivity extends AppCompatActivity {
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-						.setAction("Action", null).show();
+				ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();
+				if (layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+					layoutParams.height = 150;
+				} else {
+					layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+				}
+				recyclerView.setLayoutParams(layoutParams);
 			}
 		});
 		init();
@@ -79,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 		flowLayoutManager = new FlowLayoutManager();
 		flowLayoutManager.setAutoMeasureEnabled(true);
 		recyclerView.setLayoutManager(flowLayoutManager);
-		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(3, 3, 13)));
+		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(10, 3, 13)));
 	}
 
 	private void updateListBySpinners() {
