@@ -77,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
 		});
 		recyclerView = (RecyclerView) findViewById(R.id.list);
 		flowLayoutManager = new FlowLayoutManager();
+		flowLayoutManager.setAutoMeasureEnabled(true);
 		recyclerView.setLayoutManager(flowLayoutManager);
-		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(100, 3, 13)));
+		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(3, 3, 13)));
 	}
 
 	private void updateListBySpinners() {

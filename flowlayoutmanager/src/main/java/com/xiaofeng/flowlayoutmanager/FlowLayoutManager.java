@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -555,6 +556,11 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		startSmoothScroll(smoothScroller);
 	}
 
+	@Override
+	public void setAutoMeasureEnabled(boolean enabled) {
+		super.setAutoMeasureEnabled(enabled);
+	}
+
 	private int leftVisibleEdge() {
 		return getPaddingLeft();
 	}
@@ -572,11 +578,17 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	}
 
 	private boolean childVisible(int left, int top, int right, int bottom) {
+		if (recyclerView.getLayoutParams().height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+			return true;
+		}
 		return Rect.intersects(new Rect(leftVisibleEdge(), topVisibleEdge(), rightVisibleEdge(), bottomVisibleEdge()),
 				new Rect(left, top, right, bottom));
 	}
 
 	private boolean childVisible(Rect childRect) {
+		if (recyclerView.getLayoutParams().height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+			return true;
+		}
 		return Rect.intersects(new Rect(leftVisibleEdge(), topVisibleEdge(), rightVisibleEdge(), bottomVisibleEdge()), childRect);
 	}
 
