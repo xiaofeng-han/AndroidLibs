@@ -142,7 +142,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 			}
 
 			// stop add new view if after removal, new items are not visible.
-			if (!childVisible(real_x, real_y, real_x + rect.width(), real_y + rect.height())) {
+			if (!childVisible(true, real_x, real_y, real_x + rect.width(), real_y + rect.height())) {
 				recycler.recycleView(child);
 				break;
 			} else {
@@ -170,7 +170,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		for (int i = firstChildAdapterPosition; i < itemCount; i ++) {
 			View child = recycler.getViewForPosition(i);
 			newLine = calcChildLayoutRect(child, x, y, height, layoutContext, rect);
-			if (!childVisible(rect)) {
+			if (!childVisible(false, rect)) {
 				recycler.recycleView(child);
 				return;
 			} else {
@@ -577,7 +577,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		return getHeight() - getPaddingBottom();
 	}
 
-	private boolean childVisible(int left, int top, int right, int bottom) {
+	private boolean childVisible(boolean preLayout, int left, int top, int right, int bottom) {
 		if (recyclerView.getLayoutParams().height == ViewGroup.LayoutParams.WRAP_CONTENT) {
 			return true;
 		}
@@ -585,8 +585,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 				new Rect(left, top, right, bottom));
 	}
 
-	private boolean childVisible(Rect childRect) {
-		if (recyclerView.getLayoutParams().height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+	private boolean childVisible(boolean preLayout, Rect childRect) {
+		if (!preLayout && recyclerView.getLayoutParams().height == ViewGroup.LayoutParams.WRAP_CONTENT) {
 			return true;
 		}
 		return Rect.intersects(new Rect(leftVisibleEdge(), topVisibleEdge(), rightVisibleEdge(), bottomVisibleEdge()), childRect);
