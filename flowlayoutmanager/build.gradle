@@ -54,5 +54,5 @@ dependencies {
     compile(group: 'com.android.support', name: 'appcompat-v7', version: supportLibVersion)
     compile(group: 'com.android.support', name: 'recyclerview-v7', version: supportLibVersion)
 }
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
