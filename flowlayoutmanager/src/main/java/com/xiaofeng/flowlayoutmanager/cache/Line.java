@@ -43,4 +43,13 @@ public class Line {
 		clone.maxHeight = maxHeight;
 		return clone;
 	}
+
+	@Override
+	public String toString() {
+		return "Line{" +
+				"itemCount=" + itemCount +
+				", totalWidth=" + totalWidth +
+				", maxHeight=" + maxHeight +
+				'}';
+	}
 }

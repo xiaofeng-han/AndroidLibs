@@ -23,28 +23,32 @@ public class CacheHelper {
 	}
 
 	public void add(int startIndex, Point... sizes) {
+		invalidateLineMapAfter(startIndex);
 		makeSpace(startIndex, sizes.length);
 		int index = startIndex;
 		for (Point size : sizes) {
 			sizeMap.put(index ++, size);
 		}
-		rebuildLineMap();
+		refreshLineMap();
 	}
 
 	public void add(int startIndex, int count) {
+		invalidateLineMapAfter(startIndex);
 		makeSpace(startIndex, count);
-		rebuildLineMap();
+		refreshLineMap();
 	}
 
 	public void invalidSizes(int index, int count) {
+		invalidateLineMapAfter(index);
 		int actualCount = actualCount(index, count);
 		for (int i = 0; i < actualCount; i ++) {
 			sizeMap.remove(index + i);
 		}
-		rebuildLineMap();
+		refreshLineMap();
 	}
 
 	public void remove(int index, int count) {
+		invalidateLineMapAfter(index);
 		int actualCount = actualCount(index, count);
 		for (int i = 0; i < actualCount; i ++) {
 			sizeMap.remove(index + i);
@@ -57,13 +61,14 @@ public class CacheHelper {
 			sizeMap.put(i - actualCount, tmp);
 		}
 
-		rebuildLineMap();
+		refreshLineMap();
 	}
 
 	/**
 	 * Move items from one place to another. no check on parameter as invoker will make sure it is correct
 	 */
 	public void move(int from, int to, int count) {
+		invalidateLineMapAfter(Math.min(from, to));
 		Point[] itemsToMove = new Point[count];
 		for (int i = from; i < from + count; i ++) {
 			itemsToMove[i - from] = sizeMap.get(i);
@@ -91,7 +96,7 @@ public class CacheHelper {
 		for (Point item : itemsToMove) {
 			sizeMap.put(setIndex++, item);
 		}
-		rebuildLineMap();
+		refreshLineMap();
 	}
 
 	public int[] getLineMap() {
@@ -154,12 +159,11 @@ public class CacheHelper {
 	/**
 	 * Rebuild line map. and should stop if there is a hole (like item changed or item inserted but not measured)
 	 */
-	private void rebuildLineMap() {
-		lineMap.clear();
-		int index = 0;
+	private void refreshLineMap() {
+		int index = refreshLineMapStartIndex();
 		Point cachedSize = sizeMap.get(index, null);
 		int lineWidth = 0;
-		int lineIndex = 0;
+		int lineIndex = lineMap.size();
 		int lineItemCount = 0;
 		Line currentLine = new Line();
 
@@ -215,5 +219,30 @@ public class CacheHelper {
 	 */
 	private int actualCount(int index, int count) {
 		return index + count > sizeMap.size() ? sizeMap.size() - index : count;
+	}
+
+	/**
+	 * Invalidate line map that contains item and all lines after
+	 * @param itemIndex
+	 */
+	private void invalidateLineMapAfter(int itemIndex) {
+		int itemLineIndex = itemLineIndex(itemIndex);
+		Line line = lineMap.get(itemLineIndex, null);
+		while (line != null) {
+			lineMap.remove(itemLineIndex);
+			itemLineIndex ++;
+			line = lineMap.get(itemLineIndex, null);
+		}
+	}
+
+	private int refreshLineMapStartIndex() {
+		int itemCount = 0;
+		for (int i = 0; i < lineMap.size(); i ++) {
+			itemCount += lineMap.get(i).itemCount;
+		}
+		if (itemCount >= sizeMap.size()) {
+			return NOT_FOUND;
+		}
+		return itemCount;
 	}
 }
