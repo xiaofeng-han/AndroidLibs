@@ -6,9 +6,11 @@ import android.graphics.Rect;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -377,6 +379,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		int actualDy = dy;
 		int maxHeightItemIndex = getMaxHeightIndexInLine(0);
 		View maxHeightItem = getChildAt(maxHeightItemIndex);
+
+		// scrolling
 		int offScreenTop = topVisibleEdge() - getDecoratedTop(maxHeightItem);
 		if (offScreenTop > Math.abs(actualDy)) {
 			offsetChildrenVertical(-dy);
@@ -747,6 +751,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		return calcChildLayoutRect(child, x, y, lineHeight, LayoutContext.fromLayoutOptions(flowLayoutOptions), rect);
 	}
 	private boolean calcChildLayoutRect(View child, int x, int y, int lineHeight, LayoutContext layoutContext, Rect rect) {
+
 		boolean newLine;
 		measureChildWithMargins(child, 0, 0);
 		int childWidth = getDecoratedMeasuredWidth(child);
