@@ -5,12 +5,9 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,11 +17,6 @@ import java.util.List;
  */
 public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
-	public interface ViewCacheUpdateCallback {
-		boolean shouldUpdate(int position);
-		int alterPosition(int position);
-	}
-
 	private static final String LOG_TAG = "FlowLayoutManager";
 	RecyclerView recyclerView;
 	int firstChildAdapterPosition = 0;
@@ -32,7 +24,6 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	FlowLayoutOptions flowLayoutOptions;
 	FlowLayoutOptions newFlowLayoutOptions;
 	LayoutHelper layoutHelper;
-	SparseArray<Rect> viewSizeCache = new SparseArray<>();
 	public FlowLayoutManager() {
 		flowLayoutOptions = new FlowLayoutOptions();
 		newFlowLayoutOptions = FlowLayoutOptions.clone(flowLayoutOptions);
@@ -234,108 +225,32 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	@Override
 	public void onItemsChanged(RecyclerView recyclerView) {
 		this.flowLayoutOptions = FlowLayoutOptions.clone(newFlowLayoutOptions);
-		viewSizeCache.clear();
 		super.onItemsChanged(recyclerView);
 
 	}
 
 	@Override
 	public void onItemsAdded(RecyclerView recyclerView, final int positionStart, final int itemCount) {
-		updateViewCache(new ViewCacheUpdateCallback() {
-			@Override
-			public boolean shouldUpdate(int position) {
-				return position >= positionStart;
-			}
-
-			@Override
-			public int alterPosition(int position) {
-				return position + itemCount;
-			}
-		});
 		super.onItemsAdded(recyclerView, positionStart, itemCount);
-	}
-
-	private void updateViewCache(ViewCacheUpdateCallback updateCallback) {
-		SparseArray<Rect> temp = new SparseArray<>();
-		for (int i = 0; i < viewSizeCache.size(); i ++) {
-			int key = viewSizeCache.keyAt(i);
-			if (updateCallback.shouldUpdate(key)) {
-				temp.append(updateCallback.alterPosition(key), viewSizeCache.get(key));
-				viewSizeCache.remove(key);
-			}
-		}
-
-		for (int i = 0; i < temp.size(); i ++) {
-			int tmpKey = temp.keyAt(i);
-			viewSizeCache.append(tmpKey, temp.get(tmpKey));
-		}
-		temp.clear();
 	}
 
 	@Override
 	public void onItemsRemoved(RecyclerView recyclerView, final int positionStart, final int itemCount) {
-		for (int i = positionStart; i < positionStart + itemCount; i ++) {
-			viewSizeCache.remove(i);
-		}
-		updateViewCache(new ViewCacheUpdateCallback() {
-			@Override
-			public boolean shouldUpdate(int position) {
-				return position >= positionStart + itemCount;
-			}
-
-			@Override
-			public int alterPosition(int position) {
-				return position - itemCount;
-			}
-		});
 		super.onItemsRemoved(recyclerView, positionStart, itemCount);
 	}
 
 	@Override
 	public void onItemsUpdated(RecyclerView recyclerView, int positionStart, int itemCount) {
-		for (int i = positionStart; i < positionStart + itemCount; i ++) {
-			viewSizeCache.remove(i);
-		}
 		super.onItemsUpdated(recyclerView, positionStart, itemCount);
 	}
 
 	@Override
 	public void onItemsUpdated(RecyclerView recyclerView, int positionStart, int itemCount, Object payload) {
-		for (int i = positionStart; i < positionStart + itemCount; i ++) {
-			viewSizeCache.remove(i);
-		}
 		super.onItemsUpdated(recyclerView, positionStart, itemCount, payload);
 	}
 
 	@Override
 	public void onItemsMoved(RecyclerView recyclerView, final int from, final int to, int itemCount) {
-		boolean movingForward = to - from > 0;
-		int steps = Math.abs(to - from);
-		SparseArray<Rect> temp = new SparseArray<>();
-		for (int i = 0; i < itemCount; i ++) {
-			int currentPosition = from + i;
-			temp.append(currentPosition + (to - from), viewSizeCache.get(currentPosition));
-			viewSizeCache.remove(currentPosition);
-		}
-
-		final int start = movingForward ? from + itemCount : from - steps;
-		final int end = start + steps;
-		updateViewCache(new ViewCacheUpdateCallback() {
-			@Override
-			public boolean shouldUpdate(int position) {
-				return position >= start && position < end;
-			}
-
-			@Override
-			public int alterPosition(int position) {
-				return position + from - to;
-			}
-		});
-
-		for (int i = 0; i < temp.size(); i ++) {
-			viewSizeCache.append(temp.keyAt(i), temp.get(temp.keyAt(i)));
-		}
-		temp.clear();
 		super.onItemsMoved(recyclerView, from, to, itemCount);
 	}
 
