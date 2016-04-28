@@ -60,6 +60,40 @@ public class CacheHelper {
 		rebuildLineMap();
 	}
 
+	/**
+	 * Move items from one place to another. no check on parameter as invoker will make sure it is correct
+	 */
+	public void move(int from, int to, int count) {
+		Point[] itemsToMove = new Point[count];
+		for (int i = from; i < from + count; i ++) {
+			itemsToMove[i - from] = sizeMap.get(i);
+		}
+		boolean movingForward = from - to > 0;
+		int itemsToShift = Math.abs(from - to);
+
+		if (!movingForward) {
+			itemsToShift -= count;
+		}
+		int shiftIndex = movingForward ? from - 1 : from + count;
+		int shiftIndexStep = movingForward ? -1 : 1;
+
+		int shifted = 0;
+		while (shifted < itemsToShift) {
+			sizeMap.put(shiftIndex - (shiftIndexStep) * count, sizeMap.get(shiftIndex));
+			shiftIndex += shiftIndexStep;
+			shifted ++;
+		}
+
+		int setIndex = to;
+		if (!movingForward) {
+			setIndex = from + itemsToShift;
+		}
+		for (Point item : itemsToMove) {
+			sizeMap.put(setIndex++, item);
+		}
+		rebuildLineMap();
+	}
+
 	public int[] getLineMap() {
 		int[] lineCounts = new int[this.lineMap.size()];
 		for (int i = 0; i < this.lineMap.size(); i ++) {

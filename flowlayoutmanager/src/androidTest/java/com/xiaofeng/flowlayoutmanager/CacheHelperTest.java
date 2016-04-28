@@ -253,6 +253,80 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line counts have 2 items", lineCounts.length, is(2));
 		assertThat("line 1 have 2 items", lineCounts[0], is(2));
 		assertThat("line 2 have 1 items", lineCounts[1], is(1));
+	}
 
+	public void testRemoveBeyondEnd() throws Exception {
+		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
+		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
+		int contentAreaWidth = 10;
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+
+		Point[] items = new Point[] {
+				new Point(5, 1), new Point(2, 1)
+				, new Point(4, 1), new Point(4, 1), new Point(2, 1)
+				, new Point(2, 1), new Point(3, 2)};
+		cacheHelper.add(0, items);
+
+		cacheHelper.remove(5, 10);
+		// should be
+		// 5, 2,
+		// 4, 4, 2
+
+		int[] lineCounts = cacheHelper.getLineMap();
+		assertThat("line counts have 2 items", lineCounts.length, is(2));
+		assertThat("line 1 have 2 items", lineCounts[0], is(2));
+		assertThat("line 2 have 3 items", lineCounts[1], is(3));
+	}
+
+	public void testMoveForward() throws Exception {
+		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
+		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
+		int contentAreaWidth = 10;
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+
+		Point[] items = new Point[] {
+				new Point(5, 1), new Point(2, 1)
+				, new Point(4, 1), new Point(4, 1), new Point(2, 1)
+				, new Point(2, 1), new Point(3, 2)};
+		cacheHelper.add(0, items);
+
+		cacheHelper.move(5, 1, 2);
+
+		// after move
+		// 5, 2, 3
+		// 2, 4, 4
+		// 2
+
+		int[] lineCounts = cacheHelper.getLineMap();
+		assertThat("line counts have 3 items", lineCounts.length, is(3));
+		assertThat("line 1 have 3 items", lineCounts[0], is(3));
+		assertThat("line 2 have 3 items", lineCounts[1], is(3));
+		assertThat("line 3 have 1 items", lineCounts[2], is(1));
+	}
+
+	public void testMoveBackward() throws Exception {
+		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
+		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
+		int contentAreaWidth = 10;
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+
+		Point[] items = new Point[] {
+				new Point(5, 1), new Point(2, 1)
+				, new Point(4, 1), new Point(4, 1), new Point(2, 1)
+				, new Point(2, 1), new Point(3, 2)};
+		cacheHelper.add(0, items);
+
+		cacheHelper.move(3, 6, 2);
+
+		// after move
+		// 5, 2
+		// 4, 2, 4
+		// 2, 3
+
+		int[] lineCounts = cacheHelper.getLineMap();
+		assertThat("line counts have 3 items", lineCounts.length, is(3));
+		assertThat("line 1 have 3 items", lineCounts[0], is(2));
+		assertThat("line 2 have 3 items", lineCounts[1], is(3));
+		assertThat("line 3 have 1 items", lineCounts[2], is(2));
 	}
 }
