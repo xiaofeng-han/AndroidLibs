@@ -242,6 +242,10 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	@Override
 	public void onItemsChanged(RecyclerView recyclerView) {
 		this.flowLayoutOptions = FlowLayoutOptions.clone(newFlowLayoutOptions);
+		if (cacheHelper != null) {
+			cacheHelper.clear();
+		}
+		cacheHelper = new CacheHelper(flowLayoutOptions.itemsPerLine, layoutHelper.visibleAreaWidth());
 		super.onItemsChanged(recyclerView);
 
 	}
@@ -695,24 +699,47 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	}
 
 	public FlowLayoutManager singleItemPerLine() {
-		newFlowLayoutOptions.itemsPerLine = 1;
-		cacheHelper.clear();
-		cacheHelper = new CacheHelper(1, layoutHelper.visibleAreaWidth());
+		if (layoutHelper == null) {
+			flowLayoutOptions.itemsPerLine = 1;
+		} else {
+			newFlowLayoutOptions.itemsPerLine = 1;
+		}
+		if (cacheHelper != null) {
+			cacheHelper.clear();
+		}
+		if (layoutHelper != null) {
+			cacheHelper = new CacheHelper(1, layoutHelper.visibleAreaWidth());
+		}
 		return this;
 	}
 
 	public FlowLayoutManager maxItemsPerLine(int itemsPerLine) {
-		newFlowLayoutOptions.itemsPerLine = itemsPerLine;
-		cacheHelper.clear();
-		cacheHelper = new CacheHelper(itemsPerLine, layoutHelper.visibleAreaWidth());
-
+		if (layoutHelper == null) {
+			flowLayoutOptions.itemsPerLine = itemsPerLine;
+		} else {
+			newFlowLayoutOptions.itemsPerLine = itemsPerLine;
+		}
+		if (cacheHelper != null) {
+			cacheHelper.clear();
+		}
+		if (layoutHelper != null) {
+			cacheHelper = new CacheHelper(itemsPerLine, layoutHelper.visibleAreaWidth());
+		}
 		return this;
 	}
 
 	public FlowLayoutManager removeItemPerLineLimit() {
-		newFlowLayoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
-		cacheHelper.clear();
-		cacheHelper = new CacheHelper(FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT, layoutHelper.visibleAreaWidth());
+		if (layoutHelper == null) {
+			flowLayoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
+		} else {
+			newFlowLayoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
+		}
+		if (cacheHelper != null) {
+			cacheHelper.clear();
+		}
+		if (layoutHelper != null) {
+			cacheHelper = new CacheHelper(FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT, layoutHelper.visibleAreaWidth());
+		}
 		return this;
 	}
 

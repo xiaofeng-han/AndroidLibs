@@ -11,7 +11,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 6
-        versionName "1.1.5"
+        versionName "1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     testOptions {
@@ -41,7 +41,7 @@ project.ext {
     siteUrl = 'https://github.com/xiaofeng-han/AndroidLibs/tree/master/flowlayoutmanager'
     gitUrl = 'https://github.com/xiaofeng-han/AndroidLibs.git'
 
-    libraryVersion = '1.1.5'
+    libraryVersion = '1.2.1'
 
     developerId = 'hhhanxf'
     developerName = 'Xiaofeng Han'
