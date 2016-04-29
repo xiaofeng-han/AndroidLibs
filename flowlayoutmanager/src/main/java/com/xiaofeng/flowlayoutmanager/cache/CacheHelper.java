@@ -12,6 +12,7 @@ public class CacheHelper {
 	int contentAreaWidth;
 	SparseArray<Point> sizeMap;
 	SparseArray<Line> lineMap;
+	boolean batchSetting = false;
 
 	public CacheHelper(int itemsPerLine, int contentAreaWidth) {
 		this.itemPerLine = itemsPerLine;
@@ -210,6 +211,30 @@ public class CacheHelper {
 		lineMap.clear();
 	}
 
+	public void contentAreaWidth(int width) {
+		contentAreaWidth = width;
+		lineMap.clear();
+		refreshLineMap();
+	}
+
+	public int contentAreaWidth() {
+		return contentAreaWidth;
+	}
+
+	public boolean valid() {
+		return contentAreaWidth > 0;
+	}
+
+	public void startBatchSetting() {
+		batchSetting = true;
+	}
+
+	public void endBatchSetting() {
+		batchSetting = false;
+		lineMap.clear();
+		refreshLineMap();
+	}
+
 	//===================== Helper methods ========================
 
 	/**
@@ -228,7 +253,7 @@ public class CacheHelper {
 	 * Rebuild line map. and should stop if there is a hole (like item changed or item inserted but not measured)
 	 */
 	private void refreshLineMap() {
-		if (!valid()) {
+		if (!valid() || batchSetting) {
 			return;
 		}
 		int index = refreshLineMapStartIndex();
@@ -303,6 +328,9 @@ public class CacheHelper {
 	 * @param itemIndex
 	 */
 	private void invalidateLineMapAfter(int itemIndex) {
+		if (batchSetting) {
+			return;
+		}
 		int itemLineIndex = itemLineIndex(itemIndex);
 		Line line = lineMap.get(itemLineIndex, null);
 		if (line == null && lineMap.size() > 0) {
@@ -326,17 +354,7 @@ public class CacheHelper {
 		return itemCount;
 	}
 
-	public void contentAreaWidth(int width) {
-		contentAreaWidth = width;
-		lineMap.clear();
-		refreshLineMap();
-	}
 
-	public int contentAreaWidth() {
-		return contentAreaWidth;
-	}
 
-	public boolean valid() {
-		return contentAreaWidth > 0;
-	}
+
 }

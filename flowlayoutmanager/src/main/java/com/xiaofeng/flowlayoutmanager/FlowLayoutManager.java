@@ -48,11 +48,14 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		if (cacheHelper.contentAreaWidth() != layoutHelper.visibleAreaWidth()) {
 			cacheHelper.contentAreaWidth(layoutHelper.visibleAreaWidth());
 		}
+
 		recyclerRef = recycler;
 		if (state.isPreLayout()) {
 			onPreLayoutChildren(recycler, state);
 		} else {
+			cacheHelper.startBatchSetting();
 			onRealLayoutChildren(recycler);
+			cacheHelper.endBatchSetting();
 		}
 
 	}
