@@ -176,8 +176,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 		View firstChild = getChildAt(0);
 		View lastChild = getChildAt(getChildCount() - 1);
-		View topChild = getChildAt(getMaxHeightIndexInLine(0));
-		View bottomChild = getChildAt(getMaxHeightIndexInLine(getChildCount() - 1));
+		View topChild = getChildAt(getMaxHeightLayoutPositionInLine(0));
+		View bottomChild = getChildAt(getMaxHeightLayoutPositionInLine(getChildCount() - 1));
 		boolean topReached = false, bottomReached = false;
 		if (getChildAdapterPosition(firstChild) == 0) {
 			if (getDecoratedTop(topChild) >= topVisibleEdge()) {
@@ -204,8 +204,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 		View firstChild = getChildAt(0);
 		View lastChild = getChildAt(getChildCount() - 1);
-		View topChild = getChildAt(getMaxHeightIndexInLine(0));
-		View bottomChild = getChildAt(getMaxHeightIndexInLine(getChildCount() - 1));
+		View topChild = getChildAt(getMaxHeightLayoutPositionInLine(0));
+		View bottomChild = getChildAt(getMaxHeightLayoutPositionInLine(getChildCount() - 1));
 		boolean topReached = false, bottomReached = false;
 		if (getChildAdapterPosition(firstChild) == 0) {
 			if (getDecoratedTop(topChild) >= topVisibleEdge()) {
@@ -267,7 +267,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	 */
 	private int contentMoveUp(int dy, RecyclerView.Recycler recycler) {
 		int actualDy = dy;
-		int maxHeightIndex = getMaxHeightIndexInLine(getChildCount() - 1);
+		int maxHeightIndex = getMaxHeightLayoutPositionInLine(getChildCount() - 1);
 		View maxHeightItem = getChildAt(maxHeightIndex);
 		int offscreenBottom = getDecoratedBottom(maxHeightItem) - bottomVisibleEdge();
 		if (offscreenBottom >= dy) {
@@ -276,7 +276,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		}
 		while (getChildAdapterPosition(getChildCount() - 1) < getItemCount() - 1) {
 			addNewLineAtBottom(recycler);
-			maxHeightIndex = getMaxHeightIndexInLine(getChildCount() - 1);
+			maxHeightIndex = getMaxHeightLayoutPositionInLine(getChildCount() - 1);
 			maxHeightItem = getChildAt(maxHeightIndex);
 			offscreenBottom += getDecoratedMeasuredHeight(maxHeightItem);
 			if (offscreenBottom >= dy) {
@@ -300,7 +300,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	 */
 	private int contentMoveDown(int dy, RecyclerView.Recycler recycler) {
 		int actualDy = dy;
-		int maxHeightItemIndex = getMaxHeightIndexInLine(0);
+		int maxHeightItemIndex = getMaxHeightLayoutPositionInLine(0);
 		View maxHeightItem = getChildAt(maxHeightItemIndex);
 
 		// scrolling
@@ -311,7 +311,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		}
 		while (getChildAdapterPosition(0) > 0) {
 			addNewLineAtTop(recycler);
-			maxHeightItemIndex = getMaxHeightIndexInLine(0);
+			maxHeightItemIndex = getMaxHeightLayoutPositionInLine(0);
 			maxHeightItem = getChildAt(maxHeightItemIndex);
 			offScreenTop += getDecoratedMeasuredHeight(maxHeightItem);
 			if (offScreenTop >= Math.abs(dy)) {
@@ -335,7 +335,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	 * Add new line of elements at top, to keep layout, have to virtually layout from beginning.
 	 */
 	private void addNewLineAtTop(RecyclerView.Recycler recycler) {
-		int x = layoutStartPoint().x, bottom = getDecoratedTop(getChildAt(getMaxHeightIndexInLine(0))), y;
+		int x = layoutStartPoint().x, bottom = getDecoratedTop(getChildAt(getMaxHeightLayoutPositionInLine(0))), y;
 		int height = 0;
 		List<View> lineChildren = new LinkedList<>();
 		int currentAdapterPosition = 0;
@@ -344,6 +344,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		boolean newline;
 		boolean firstItem = true;
 		LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
+
+
 		while (currentAdapterPosition <= endAdapterPosition) {
 			View newChild = recycler.getViewForPosition(currentAdapterPosition);
 
@@ -395,7 +397,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	 * Add new line at bottom of views.
 	 */
 	private void addNewLineAtBottom(RecyclerView.Recycler recycler) {
-		int x = layoutStartPoint().x, y = getDecoratedBottom(getChildAt(getMaxHeightIndexInLine(getChildCount() - 1)));
+		int x = layoutStartPoint().x, y = getDecoratedBottom(getChildAt(getMaxHeightLayoutPositionInLine(getChildCount() - 1)));
 		int childAdapterPosition = getChildAdapterPosition(getChildCount() - 1) + 1;
 		// no item to add
 		if (childAdapterPosition == getItemCount()) {
@@ -500,10 +502,10 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		return Rect.intersects(new Rect(leftVisibleEdge(), topVisibleEdge(), rightVisibleEdge(), bottomVisibleEdge()), childRect);
 	}
 
-	private int getMaxHeightIndexInLine(int index) {
-		final View child = getChildAt(index);
-		int maxIndexBefore = index, maxIndexAfter = index, maxHeightBefore = getDecoratedMeasuredHeight(child), maxHeightAfter = getDecoratedMeasuredHeight(child);
-		int currentIndex = index;
+	private int getMaxHeightLayoutPositionInLine(int layoutPosition) {
+		final View child = getChildAt(layoutPosition);
+		int maxIndexBefore = layoutPosition, maxIndexAfter = layoutPosition, maxHeightBefore = getDecoratedMeasuredHeight(child), maxHeightAfter = getDecoratedMeasuredHeight(child);
+		int currentIndex = layoutPosition;
 		LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
 		while (currentIndex >= 0 && !isStartOfLine(currentIndex, layoutContext)) {
 			final View beforeChild = getChildAt(currentIndex);
@@ -519,7 +521,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 			maxHeightBefore = getDecoratedMeasuredHeight(getChildAt(currentIndex));
 		}
 
-		currentIndex = index;
+		currentIndex = layoutPosition;
 		while (currentIndex < getChildCount() && !isEndOfLine(currentIndex, layoutContext)) {
 			final View afterChild = getChildAt(currentIndex);
 			if (getDecoratedMeasuredHeight(afterChild) > maxHeightAfter) {
@@ -556,8 +558,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		return viewList;
 	}
 
-	private int getChildAdapterPosition(int index) {
-		return getChildAdapterPosition(getChildAt(index));
+	private int getChildAdapterPosition(int layoutPosition) {
+		return getChildAdapterPosition(getChildAt(layoutPosition));
 	}
 
 	private int getChildAdapterPosition(View child) {
@@ -572,7 +574,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	}
 
 	private boolean lineVisible(int index) {
-		int maxHeightItemIndex = getMaxHeightIndexInLine(index);
+		int maxHeightItemIndex = getMaxHeightLayoutPositionInLine(index);
 		View maxHeightItem = getChildAt(maxHeightItemIndex);
 		return Rect.intersects(new Rect(leftVisibleEdge(), topVisibleEdge(), rightVisibleEdge(), bottomVisibleEdge()),
 				new Rect(leftVisibleEdge(), getDecoratedTop(maxHeightItem), rightVisibleEdge(), getDecoratedBottom(maxHeightItem)));
@@ -600,7 +602,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 				return getDecoratedTop(getChildAt(targetChildIndex)) - topVisibleEdge();
 			} else {
 				// target child is below screen edge
-				int y = getDecoratedBottom(getChildAt(getMaxHeightIndexInLine(getChildCount() - 1))) - topVisibleEdge();
+				int y = getDecoratedBottom(getChildAt(getMaxHeightLayoutPositionInLine(getChildCount() - 1))) - topVisibleEdge();
 				int targetAdapterPosition = lastChildAdapterPosition + 1;
 				int x = layoutStartPoint().x;
 				int height = 0;
