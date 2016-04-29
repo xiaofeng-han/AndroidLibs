@@ -231,8 +231,7 @@ public class CacheHelper {
 		if (!valid()) {
 			return;
 		}
-		lineMap.clear();
-		int index = 0;//refreshLineMapStartIndex();
+		int index = refreshLineMapStartIndex();
 		Point cachedSize = sizeMap.get(index, null);
 		int lineWidth = 0;
 		int lineIndex = lineMap.size();
