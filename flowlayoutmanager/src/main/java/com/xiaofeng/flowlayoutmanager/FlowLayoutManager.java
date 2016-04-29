@@ -5,12 +5,12 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.xiaofeng.flowlayoutmanager.cache.CacheHelper;
+import com.xiaofeng.flowlayoutmanager.cache.Line;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -41,13 +41,14 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 	@Override
 	public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+		if (!cacheHelper.valid() && getChildCount() != 0) {
+			return;
+		}
 		recyclerRef = recycler;
 		if (state.isPreLayout()) {
 			onPreLayoutChildren(recycler, state);
 		} else {
 			onRealLayoutChildren(recycler);
-			String dumpedCache = cacheHelper.dumpCache();
-			Log.i("cache", dumpedCache);
 		}
 	}
 
@@ -345,36 +346,48 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		boolean firstItem = true;
 		LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
 
-
-		while (currentAdapterPosition <= endAdapterPosition) {
-			View newChild = recycler.getViewForPosition(currentAdapterPosition);
-
-			newline = calcChildLayoutRect(newChild, x, 0, height, layoutContext, rect);
-
-			// add view to make sure not be recycled.
-			addView(newChild, lineChildren.size());
-			if (newline && !firstItem) {
-				// end of one line, but not reach the top line yet. recycle the line and
-				// move on to next.
-				for (View viewToRecycle : lineChildren) {
-					removeAndRecycleView(viewToRecycle, recycler);
-				}
-				lineChildren.clear();
-				x = advanceInSameLine(layoutStartPoint().x, rect, layoutContext);
-				height = rect.height();
-				layoutContext.currentLineItemCount = 1;
-			} else {
-				x = advanceInSameLine(x, rect, layoutContext);
-				height = Math.max(height, rect.height());
-				firstItem = false;
-				layoutContext.currentLineItemCount ++;
+		int firstItemAdapterPosition = getChildAdapterPosition(0);
+		if (cacheHelper.hasPreviousLineCached(firstItemAdapterPosition)) {
+			int previousLineIndex = cacheHelper.itemLineIndex(firstItemAdapterPosition) - 1;
+			Line previousLine = cacheHelper.getLine(previousLineIndex);
+			int firstNewItemAdapterPosition = cacheHelper.firstItemIndex(previousLineIndex);
+			for (int i = 0; i < previousLine.itemCount; i ++) {
+				View newView = recycler.getViewForPosition(firstNewItemAdapterPosition + i);
+				addView(newView, i);
+				lineChildren.add(newView);
 			}
-			lineChildren.add(newChild);
+			height = previousLine.maxHeight;
+		} else {
 
-			currentAdapterPosition ++;
+			while (currentAdapterPosition <= endAdapterPosition) {
+				View newChild = recycler.getViewForPosition(currentAdapterPosition);
 
+				newline = calcChildLayoutRect(newChild, x, 0, height, layoutContext, rect);
+
+				// add view to make sure not be recycled.
+				addView(newChild, lineChildren.size());
+				if (newline && !firstItem) {
+					// end of one line, but not reach the top line yet. recycle the line and
+					// move on to next.
+					for (View viewToRecycle : lineChildren) {
+						removeAndRecycleView(viewToRecycle, recycler);
+					}
+					lineChildren.clear();
+					x = advanceInSameLine(layoutStartPoint().x, rect, layoutContext);
+					height = rect.height();
+					layoutContext.currentLineItemCount = 1;
+				} else {
+					x = advanceInSameLine(x, rect, layoutContext);
+					height = Math.max(height, rect.height());
+					firstItem = false;
+					layoutContext.currentLineItemCount++;
+				}
+				lineChildren.add(newChild);
+
+				currentAdapterPosition++;
+
+			}
 		}
-
 		x = layoutStartPoint().x;
 		y = bottom - height;
 		firstItem = true;

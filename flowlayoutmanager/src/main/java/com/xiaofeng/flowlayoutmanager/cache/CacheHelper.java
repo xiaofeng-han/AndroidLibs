@@ -212,22 +212,6 @@ public class CacheHelper {
 		lineMap.clear();
 	}
 
-	public String dumpCache() {
-		refreshLineMap();
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("area width = " + contentAreaWidth).append("\n");
-		stringBuilder.append("cached items = " + sizeMap.size()).append("\n");
-		for (int i = 0; i < sizeMap.size(); i ++) {
-			stringBuilder.append("cached item (" + i + ") = " + sizeMap.get(i)).append("\n");
-		}
-
-		stringBuilder.append("\nline map\n");
-		for (int i = 0; i < lineMap.size(); i ++) {
-			stringBuilder.append(lineMap.get(i)).append("\n");
-		}
-		return stringBuilder.toString();
-
-	}
 	//===================== Helper methods ========================
 
 	/**
