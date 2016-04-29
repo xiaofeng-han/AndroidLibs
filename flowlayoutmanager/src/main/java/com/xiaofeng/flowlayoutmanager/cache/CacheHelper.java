@@ -3,8 +3,6 @@ package com.xiaofeng.flowlayoutmanager.cache;
 import android.graphics.Point;
 import android.util.SparseArray;
 
-import com.xiaofeng.flowlayoutmanager.FlowLayoutOptions;
-
 /**
  * Created by xhan on 4/27/16.
  */
@@ -15,8 +13,8 @@ public class CacheHelper {
 	SparseArray<Point> sizeMap;
 	SparseArray<Line> lineMap;
 
-	public CacheHelper(FlowLayoutOptions layoutOptions, int contentAreaWidth) {
-		this.itemPerLine = layoutOptions.itemsPerLine;
+	public CacheHelper(int itemsPerLine, int contentAreaWidth) {
+		this.itemPerLine = itemsPerLine;
 		this.contentAreaWidth = contentAreaWidth;
 		sizeMap = new SparseArray<>();
 		lineMap = new SparseArray<>();
@@ -32,6 +30,7 @@ public class CacheHelper {
 		for (Point size : sizes) {
 			sizeMap.put(index ++, size);
 		}
+		refreshLineMap();
 	}
 
 	public void add(int startIndex, int count) {
@@ -40,6 +39,7 @@ public class CacheHelper {
 		}
 		invalidateLineMapAfter(startIndex);
 		makeSpace(startIndex, count);
+		refreshLineMap();
 	}
 
 	public void invalidSizes(int index, int count) {
@@ -51,6 +51,7 @@ public class CacheHelper {
 		for (int i = 0; i < actualCount; i ++) {
 			sizeMap.remove(index + i);
 		}
+		refreshLineMap();
 	}
 
 	public void remove(int index, int count) {
@@ -69,6 +70,7 @@ public class CacheHelper {
 			sizeMap.remove(i);
 			sizeMap.put(i - actualCount, tmp);
 		}
+		refreshLineMap();
 	}
 
 	public void setItem(int index, Point newSize) {
@@ -80,10 +82,12 @@ public class CacheHelper {
 			if (!cachedPoint.equals(newSize)) {
 				invalidateLineMapAfter(index);
 				sizeMap.put(index, newSize);
+				refreshLineMap();
 			}
 		} else {
 			invalidateLineMapAfter(index);
 			sizeMap.put(index, newSize);
+			refreshLineMap();
 		}
 	}
 
@@ -122,13 +126,13 @@ public class CacheHelper {
 		for (Point item : itemsToMove) {
 			sizeMap.put(setIndex++, item);
 		}
+		refreshLineMap();
 	}
 
 	public int[] getLineMap() {
 		if (!valid()) {
 			return new int[0];
 		}
-		refreshLineMap();
 		int[] lineCounts = new int[this.lineMap.size()];
 		for (int i = 0; i < this.lineMap.size(); i ++) {
 			lineCounts[i] = this.lineMap.get(i).itemCount;
@@ -140,7 +144,6 @@ public class CacheHelper {
 		if (!valid()) {
 			return NOT_FOUND;
 		}
-		refreshLineMap();
 		int itemCount = 0;
 		for (int i = 0; i < lineMap.size(); i ++) {
 			itemCount += lineMap.get(i).itemCount;
@@ -155,7 +158,6 @@ public class CacheHelper {
 		if (!valid()) {
 			return null;
 		}
-		refreshLineMap();
 		return getLine(itemLineIndex(itemIndex));
 	}
 
@@ -163,7 +165,6 @@ public class CacheHelper {
 		if (!valid()) {
 			return NOT_FOUND;
 		}
-		refreshLineMap();
 		int itemCount = 0;
 		for (int i = 0; i < lineIndex; i ++) {
 			itemCount += lineMap.get(i).itemCount;
@@ -175,7 +176,6 @@ public class CacheHelper {
 		if (!valid()) {
 			return null;
 		}
-		refreshLineMap();
 		return lineMap.get(lineIndex, null);
 	}
 
@@ -183,7 +183,6 @@ public class CacheHelper {
 		if (!valid()) {
 			return false;
 		}
-		refreshLineMap();
 		int lineIndex = itemLineIndex(itemIndex);
 		if (lineIndex == NOT_FOUND) {
 			return false;
@@ -199,7 +198,6 @@ public class CacheHelper {
 		if (!valid()) {
 			return false;
 		}
-		refreshLineMap();
 		int lineIndex = itemLineIndex(itemIndex);
 		if (lineIndex == NOT_FOUND) {
 			return false;
@@ -233,12 +231,16 @@ public class CacheHelper {
 		if (!valid()) {
 			return;
 		}
-		int index = refreshLineMapStartIndex();
+		lineMap.clear();
+		int index = 0;//refreshLineMapStartIndex();
 		Point cachedSize = sizeMap.get(index, null);
 		int lineWidth = 0;
 		int lineIndex = lineMap.size();
 		int lineItemCount = 0;
-		Line currentLine = new Line();
+		Line currentLine = containingLine(index);
+		if (currentLine == null) {
+			currentLine = new Line();
+		}
 
 		while (cachedSize != null) {
 			lineWidth += cachedSize.x;
@@ -329,6 +331,10 @@ public class CacheHelper {
 		contentAreaWidth = width;
 		lineMap.clear();
 		refreshLineMap();
+	}
+
+	public int contentAreaWidth() {
+		return contentAreaWidth;
 	}
 
 	public boolean valid() {

@@ -44,12 +44,17 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		if (!cacheHelper.valid() && getChildCount() != 0) {
 			return;
 		}
+
+		if (cacheHelper.contentAreaWidth() != layoutHelper.visibleAreaWidth()) {
+			cacheHelper.contentAreaWidth(layoutHelper.visibleAreaWidth());
+		}
 		recyclerRef = recycler;
 		if (state.isPreLayout()) {
 			onPreLayoutChildren(recycler, state);
 		} else {
 			onRealLayoutChildren(recycler);
 		}
+
 	}
 
 	private void onPreLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
@@ -240,26 +245,31 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 	@Override
 	public void onItemsAdded(RecyclerView recyclerView, final int positionStart, final int itemCount) {
+		cacheHelper.add(positionStart, itemCount);
 		super.onItemsAdded(recyclerView, positionStart, itemCount);
 	}
 
 	@Override
 	public void onItemsRemoved(RecyclerView recyclerView, final int positionStart, final int itemCount) {
+		cacheHelper.remove(positionStart, itemCount);
 		super.onItemsRemoved(recyclerView, positionStart, itemCount);
 	}
 
 	@Override
 	public void onItemsUpdated(RecyclerView recyclerView, int positionStart, int itemCount) {
+		cacheHelper.invalidSizes(positionStart, itemCount);
 		super.onItemsUpdated(recyclerView, positionStart, itemCount);
 	}
 
 	@Override
 	public void onItemsUpdated(RecyclerView recyclerView, int positionStart, int itemCount, Object payload) {
+		cacheHelper.invalidSizes(positionStart, itemCount);
 		super.onItemsUpdated(recyclerView, positionStart, itemCount, payload);
 	}
 
 	@Override
 	public void onItemsMoved(RecyclerView recyclerView, final int from, final int to, int itemCount) {
+		cacheHelper.move(from, to, itemCount);
 		super.onItemsMoved(recyclerView, from, to, itemCount);
 	}
 
@@ -444,7 +454,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		super.onAttachedToWindow(view);
 		this.recyclerView = view;
 		layoutHelper = new LayoutHelper(this, recyclerView);
-		cacheHelper = new CacheHelper(flowLayoutOptions, layoutHelper.visibleAreaWidth());
+		cacheHelper = new CacheHelper(flowLayoutOptions.itemsPerLine, layoutHelper.visibleAreaWidth());
 		if (layoutHelper.visibleAreaWidth() == 0) {
 			view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 				@Override
@@ -683,16 +693,23 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 	public FlowLayoutManager singleItemPerLine() {
 		newFlowLayoutOptions.itemsPerLine = 1;
+		cacheHelper.clear();
+		cacheHelper = new CacheHelper(1, layoutHelper.visibleAreaWidth());
 		return this;
 	}
 
 	public FlowLayoutManager maxItemsPerLine(int itemsPerLine) {
 		newFlowLayoutOptions.itemsPerLine = itemsPerLine;
+		cacheHelper.clear();
+		cacheHelper = new CacheHelper(itemsPerLine, layoutHelper.visibleAreaWidth());
+
 		return this;
 	}
 
 	public FlowLayoutManager removeItemPerLineLimit() {
 		newFlowLayoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
+		cacheHelper.clear();
+		cacheHelper = new CacheHelper(FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT, layoutHelper.visibleAreaWidth());
 		return this;
 	}
 
