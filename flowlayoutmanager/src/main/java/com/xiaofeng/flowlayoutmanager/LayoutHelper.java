@@ -23,6 +23,10 @@ public class LayoutHelper {
 		return layoutManager.getWidth() - layoutManager.getPaddingRight();
 	}
 
+	public int visibleAreaWidth() {
+		return rightVisibleEdge() - leftVisibleEdge();
+	}
+
 	public int topVisibleEdge() {
 		return layoutManager.getPaddingTop();
 	}

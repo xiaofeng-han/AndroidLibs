@@ -89,10 +89,10 @@ public class CacheHelperTest extends InstrumentationTestCase {
 				, new Point(2, 1), new Point(3, 2)};
 		cacheHelper.add(0, items);
 
-		assertThat("1st item do not have previous line cached", cacheHelper.havePreviousLineCached(0), is(false));
-		assertThat("3rd item have previous line cached", cacheHelper.havePreviousLineCached(2), is(true));
-		assertThat("8th item have previous line cached", cacheHelper.havePreviousLineCached(7), is(true));
-		assertThat("9th item do not have previous line cached", cacheHelper.havePreviousLineCached(9), is(false));
+		assertThat("1st item do not have previous line cached", cacheHelper.hasPreviousLineCached(0), is(false));
+		assertThat("3rd item have previous line cached", cacheHelper.hasPreviousLineCached(2), is(true));
+		assertThat("8th item have previous line cached", cacheHelper.hasPreviousLineCached(7), is(true));
+		assertThat("9th item do not have previous line cached", cacheHelper.hasPreviousLineCached(9), is(false));
 	}
 
 	public void testHaveNextLineCached() {
@@ -107,10 +107,10 @@ public class CacheHelperTest extends InstrumentationTestCase {
 				, new Point(9, 1)
 				, new Point(2, 1), new Point(3, 2)};
 		cacheHelper.add(0, items);
-		assertThat("1st item have next line cached", cacheHelper.haveNextLineCached(0), is(true));
-		assertThat("3rd item have next line cached", cacheHelper.haveNextLineCached(2), is(true));
-		assertThat("8th item does not have next line cached", cacheHelper.haveNextLineCached(7), is(false));
-		assertThat("9th item do not have next line cached", cacheHelper.haveNextLineCached(9), is(false));
+		assertThat("1st item have next line cached", cacheHelper.hasNextLineCached(0), is(true));
+		assertThat("3rd item have next line cached", cacheHelper.hasNextLineCached(2), is(true));
+		assertThat("8th item does not have next line cached", cacheHelper.hasNextLineCached(7), is(false));
+		assertThat("9th item do not have next line cached", cacheHelper.hasNextLineCached(9), is(false));
 	}
 
 	public void testRemoveMiddle() {
