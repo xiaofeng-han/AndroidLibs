@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 		flowLayoutManager = new FlowLayoutManager();
 		flowLayoutManager.setAutoMeasureEnabled(true);
 		recyclerView.setLayoutManager(flowLayoutManager);
-		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(2000, 3, 13)));
+		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(200, 3, 13)));
 	}
 
 	private void updateListBySpinners() {

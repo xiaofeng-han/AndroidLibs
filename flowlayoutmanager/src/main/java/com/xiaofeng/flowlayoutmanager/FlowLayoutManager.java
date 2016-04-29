@@ -363,7 +363,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 				View newChild = recycler.getViewForPosition(currentAdapterPosition);
 
 				newline = calcChildLayoutRect(newChild, x, 0, height, layoutContext, rect);
-
+				cacheHelper.setItem(currentAdapterPosition, new Point(rect.width(), rect.height()));
 				// add view to make sure not be recycled.
 				addView(newChild, lineChildren.size());
 				if (newline && !firstItem) {
@@ -423,6 +423,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		while (childAdapterPosition < getItemCount()) {
 			View newChild = recycler.getViewForPosition(childAdapterPosition);
 			newline = calcChildLayoutRect(newChild, x, y, 0, layoutContext, rect);
+			cacheHelper.setItem(childAdapterPosition, new Point(rect.width(), rect.height()));
 			if (newline && !firstItem) {
 				recycler.recycleView(newChild);
 				layoutContext.currentLineItemCount = 1;
