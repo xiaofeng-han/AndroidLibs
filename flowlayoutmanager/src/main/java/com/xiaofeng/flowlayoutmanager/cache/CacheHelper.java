@@ -23,6 +23,9 @@ public class CacheHelper {
 	}
 
 	public void add(int startIndex, Point... sizes) {
+		if (!valid()) {
+			return;
+		}
 		invalidateLineMapAfter(startIndex);
 		makeSpace(startIndex, sizes.length);
 		int index = startIndex;
@@ -32,11 +35,17 @@ public class CacheHelper {
 	}
 
 	public void add(int startIndex, int count) {
+		if (!valid()) {
+			return;
+		}
 		invalidateLineMapAfter(startIndex);
 		makeSpace(startIndex, count);
 	}
 
 	public void invalidSizes(int index, int count) {
+		if (!valid()) {
+			return;
+		}
 		invalidateLineMapAfter(index);
 		int actualCount = actualCount(index, count);
 		for (int i = 0; i < actualCount; i ++) {
@@ -45,6 +54,9 @@ public class CacheHelper {
 	}
 
 	public void remove(int index, int count) {
+		if (!valid()) {
+			return;
+		}
 		invalidateLineMapAfter(index);
 		int actualCount = actualCount(index, count);
 		for (int i = 0; i < actualCount; i ++) {
@@ -60,6 +72,9 @@ public class CacheHelper {
 	}
 
 	public void setItem(int index, Point newSize) {
+		if (!valid()) {
+			return;
+		}
 		if (sizeMap.get(index, null) != null) {
 			Point cachedPoint = sizeMap.get(index);
 			if (!cachedPoint.equals(newSize)) {
@@ -76,6 +91,9 @@ public class CacheHelper {
 	 * Move items from one place to another. no check on parameter as invoker will make sure it is correct
 	 */
 	public void move(int from, int to, int count) {
+		if (!valid()) {
+			return;
+		}
 		invalidateLineMapAfter(Math.min(from, to));
 		Point[] itemsToMove = new Point[count];
 		for (int i = from; i < from + count; i ++) {
@@ -302,6 +320,9 @@ public class CacheHelper {
 	private void invalidateLineMapAfter(int itemIndex) {
 		int itemLineIndex = itemLineIndex(itemIndex);
 		Line line = lineMap.get(itemLineIndex, null);
+		if (line == null && lineMap.size() > 0) {
+			lineMap.remove(lineMap.size() - 1);
+		}
 		while (line != null) {
 			lineMap.remove(itemLineIndex);
 			itemLineIndex ++;

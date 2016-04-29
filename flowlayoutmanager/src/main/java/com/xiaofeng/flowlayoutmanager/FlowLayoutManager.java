@@ -5,8 +5,12 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+
+import com.xiaofeng.flowlayoutmanager.cache.CacheHelper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +28,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	FlowLayoutOptions flowLayoutOptions;
 	FlowLayoutOptions newFlowLayoutOptions;
 	LayoutHelper layoutHelper;
+	CacheHelper cacheHelper;
 	public FlowLayoutManager() {
 		flowLayoutOptions = new FlowLayoutOptions();
 		newFlowLayoutOptions = FlowLayoutOptions.clone(flowLayoutOptions);
@@ -41,6 +46,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 			onPreLayoutChildren(recycler, state);
 		} else {
 			onRealLayoutChildren(recycler);
+			String dumpedCache = cacheHelper.dumpCache();
+			Log.i("cache", dumpedCache);
 		}
 	}
 
@@ -138,6 +145,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 			} else {
 				addView(child);
 				layoutDecorated(child, rect.left, rect.top, rect.right, rect.bottom);
+				cacheHelper.setItem(i, new Point(rect.width(), rect.height()));
 			}
 
 			if (newLine) {
@@ -416,10 +424,21 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	}
 
 	@Override
-	public void onAttachedToWindow(RecyclerView view) {
+	public void onAttachedToWindow(final RecyclerView view) {
 		super.onAttachedToWindow(view);
 		this.recyclerView = view;
 		layoutHelper = new LayoutHelper(this, recyclerView);
+		cacheHelper = new CacheHelper(flowLayoutOptions, layoutHelper.visibleAreaWidth());
+		if (layoutHelper.visibleAreaWidth() == 0) {
+			view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+				@Override
+				public void onGlobalLayout() {
+					view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+					cacheHelper.contentAreaWidth(layoutHelper.visibleAreaWidth());
+				}
+			});
+		}
+
 	}
 
 	@Override
