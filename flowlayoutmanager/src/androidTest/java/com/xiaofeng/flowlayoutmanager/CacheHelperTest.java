@@ -19,7 +19,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
 				, new Point(4, 1), new Point(4, 1), new Point(2, 1)
@@ -39,7 +39,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
 				, new Point(4, 1), new Point(4, 1)
@@ -60,7 +60,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
 				, new Point(4, 1), new Point(4, 1)
@@ -80,7 +80,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
 				, new Point(4, 1), new Point(4, 1)
@@ -99,7 +99,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
 				, new Point(4, 1), new Point(4, 1)
@@ -117,7 +117,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
 				, new Point(4, 1), new Point(4, 1)
@@ -157,7 +157,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
@@ -187,7 +187,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
@@ -211,7 +211,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
@@ -236,7 +236,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
@@ -259,7 +259,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
@@ -282,7 +282,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)
@@ -308,7 +308,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 		int contentAreaWidth = 10;
-		CacheHelper cacheHelper = new CacheHelper(layoutOptions, contentAreaWidth);
+		CacheHelper cacheHelper = new CacheHelper(layoutOptions.itemsPerLine, contentAreaWidth);
 
 		Point[] items = new Point[] {
 				new Point(5, 1), new Point(2, 1)

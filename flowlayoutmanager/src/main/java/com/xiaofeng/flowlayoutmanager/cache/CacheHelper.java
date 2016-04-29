@@ -258,14 +258,17 @@ public class CacheHelper {
 		}
 		int index = refreshLineMapStartIndex();
 		Point cachedSize = sizeMap.get(index, null);
-		int lineWidth = 0;
 		int lineIndex = lineMap.size();
 		int lineItemCount = 0;
 		Line currentLine = containingLine(index);
+
 		if (currentLine == null) {
 			currentLine = new Line();
+		} else {
+			lineIndex = itemLineIndex(index);
 		}
 
+		int lineWidth = currentLine.totalWidth;
 		while (cachedSize != null) {
 			lineWidth += cachedSize.x;
 			lineItemCount ++;
