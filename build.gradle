@@ -20,6 +20,15 @@ allprojects {
     }
 }
 
+subprojects {
+    ext.supportLibVersion = "23.3.0"
+    ext.playServiceVersion = "8.4.0"
+    ext.androidBuildToolVersion = "23.0.3";
+    ext.androidCompileSdkVersion = 23
+    ext.androidMinSdkVersion = 16
+    ext.androidTargetSdkVersion = 23
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
