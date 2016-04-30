@@ -1,7 +1,12 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'maven'
-apply plugin: 'signing'
+apply plugin: 'com.jfrog.bintray'
+
+project.ext {
+    supportLibVersion = "23.3.0"
+    playServiceVersion = "8.4.0"
+    libVersion = '1.2.3.1'
+    libVersionCode = 7
+}
 
 android {
     compileSdkVersion 23
@@ -10,8 +15,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 6
-        versionName "1.2.2"
+        versionCode libVersionCode
+        versionName libVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     testOptions {
@@ -19,37 +24,10 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
-
-project.ext {
-    supportLibVersion = "23.3.0"
-    playServiceVersion = "8.4.0"
-
-    bintrayRepo = 'maven'
-    bintrayName = 'FlowLayoutManager'
-
-    publishedGroupId = 'com.xiaofeng.android'
-    libraryName = 'FlowLayoutManager'
-    artifact = 'flowlayoutmanager'
-
-    libraryDescription = 'A RecyclerView LayoutManager that support flow layout and predictive animations'
-
-    siteUrl = 'https://github.com/xiaofeng-han/AndroidLibs/tree/master/flowlayoutmanager'
-    gitUrl = 'https://github.com/xiaofeng-han/AndroidLibs.git'
-
-    libraryVersion = '1.2.2'
-
-    developerId = 'hhhanxf'
-    developerName = 'Xiaofeng Han'
-    developerEmail = 'hhhanxf@gmail.com'
-
-    licenseName = 'GNU General Public License, version 3'
-    licenseUrl = 'http://opensource.org/licenses/gpl-3.0.html'
-    allLicenses = ["GPL-3.0"]
 }
 
 dependencies {
@@ -60,5 +38,30 @@ dependencies {
     androidTestCompile 'com.android.support:support-annotations:23.3.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
 }
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty('bintray.user')
+    key = properties.getProperty('bintray.apikey')
+    pkg {
+        repo = 'maven'
+        name = 'FlowLayoutManager'
+        userOrg = 'hhhanxf'
+        licenses = ['GPL-3.0']
+        vcsUrl = 'https://github.com/xiaofeng-han/AndroidLibs.git'
+        githubRepo = 'xiaofeng-han/AndroidLibs'
+        githubReleaseNotesFile = 'README.md'
+        version {
+            name = libVersion
+            desc = 'FLowLayoutManager'
+            released  = new Date()
+            vcsTag = libVersion
+            gpg {
+                sign = true
+                passphrase = properties.getProperty('bintray.gpg.password')
+            }
+        }
+    }
+}
