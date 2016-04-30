@@ -107,21 +107,9 @@ artifacts {
     archives javadocJar
 }
 
-//publishing {
-//    publications {
-//        MyPublication(MavenPublication) {
-//            from components.java
-//            groupId libGroupId
-//            artifactId libArtifactId
-//            version libVersion
-//        }
-//    }
-//}
-
 bintray {
     user = properties.getProperty('bintray.user')
     key = properties.getProperty('bintray.apikey')
-//    publications = ['MyPublication']
     configurations = ['archives']
     pkg {
         repo = 'maven'
