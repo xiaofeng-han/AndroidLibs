@@ -25,5 +25,6 @@ dependencies {
     compile(group: 'com.android.support', name: 'design', version: supportLibVersion)
     compile(group: 'com.android.support', name: 'appcompat-v7', version: supportLibVersion)
     compile(group: 'com.android.support', name: 'recyclerview-v7', version: supportLibVersion)
-    compile project(':flowlayoutmanager')
+    compile(group: 'com.android.support', name: 'recyclerview-v7', version: supportLibVersion)
+    compile 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'
 }
