@@ -1,3 +1,5 @@
+// to publish run ./gradlew clean bintrayUpload
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 
