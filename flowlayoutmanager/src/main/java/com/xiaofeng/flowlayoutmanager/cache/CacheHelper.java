@@ -4,11 +4,18 @@ import android.graphics.Point;
 import android.util.SparseArray;
 
 /**
- * Created by xhan on 4/27/16.
+ * A Helper class that will save Line information (items count, total width etc.) and will be used
+ * for layout, that will avoid low efficiency layout
  */
 public class CacheHelper {
 	public static final int NOT_FOUND = -1;
+	/**
+	 * Item per line limit, set to 0 if no limit
+	 */
 	final int itemPerLine;
+	/**
+	 * The area width for content layout, must be greater than zero
+	 */
 	int contentAreaWidth;
 	SparseArray<Point> sizeMap;
 	SparseArray<Line> lineMap;
@@ -21,6 +28,9 @@ public class CacheHelper {
 		lineMap = new SparseArray<>();
 	}
 
+	/**
+	 * Add measured items into cache
+	 */
 	public void add(int startIndex, Point... sizes) {
 		if (!valid()) {
 			return;
@@ -34,6 +44,9 @@ public class CacheHelper {
 		refreshLineMap();
 	}
 
+	/**
+	 * Make space for {@param count} items
+	 */
 	public void add(int startIndex, int count) {
 		if (!valid()) {
 			return;
@@ -43,6 +56,12 @@ public class CacheHelper {
 		refreshLineMap();
 	}
 
+	/**
+	 * Sizes has been changed and new sizes not available yet, just remove them from cache
+	 * The line map will also be invalidate after the invalidated items
+	 * @param index
+	 * @param count
+	 */
 	public void invalidSizes(int index, int count) {
 		if (!valid()) {
 			return;

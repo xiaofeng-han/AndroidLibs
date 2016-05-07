@@ -2,6 +2,7 @@ package com.xiaofeng.androidlibs;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -24,8 +25,21 @@ public class TagAdapter extends RecyclerView.Adapter<TagViewHolder> {
 	}
 
 	@Override
-	public void onBindViewHolder(TagViewHolder holder, int position) {
+	public void onBindViewHolder(final TagViewHolder holder, final int position) {
 		holder.setTagText(items.get(position));
+		holder.tagSize.setClickable(false);
+		holder.tagText.setClickable(false);
+		holder.itemView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				int adapterPosition = holder.getAdapterPosition();
+				List<String> newItems = DemoUtil.generate(2, 3, 14);
+				items.addAll(adapterPosition, newItems);
+				notifyItemRangeInserted(adapterPosition, newItems.size());
+//				items.remove(adapterPosition);
+//				notifyItemRemoved(adapterPosition);
+			}
+		});
 	}
 
 	@Override
