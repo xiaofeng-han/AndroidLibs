@@ -1,12 +1,10 @@
 package com.xiaofeng.androidlibs;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -14,12 +12,15 @@ import android.widget.Spinner;
 import com.xiaofeng.flowlayoutmanager.Alignment;
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager;
 
+import us.feras.mdv.MarkdownView;
+
 public class MainActivity extends AppCompatActivity {
 
 	RecyclerView recyclerView;
 	Spinner itemPerLineSpinner, alignmentSpinner;
 	ArrayAdapter<CharSequence> itemsPerLineAdapter, alignmentAdapter;
 	FlowLayoutManager flowLayoutManager;
+	MarkdownView markdownView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,19 +28,6 @@ public class MainActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
-		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-		fab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();
-				if (layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
-					layoutParams.height = 150;
-				} else {
-					layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-				}
-				recyclerView.setLayoutParams(layoutParams);
-			}
-		});
 		init();
 	}
 
@@ -80,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
 		flowLayoutManager.setAutoMeasureEnabled(true);
 		recyclerView.setLayoutManager(flowLayoutManager);
 		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(2000, 3, 13)));
+
+		markdownView = (MarkdownView)findViewById(R.id.instruction_mdown);
+		markdownView.loadMarkdownFile("file:///android_asset/instruction.md");
 	}
 
 	private void updateListBySpinners() {

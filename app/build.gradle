@@ -34,4 +34,5 @@ dependencies {
     compile(group: 'com.android.support', name: 'recyclerview-v7', version: supportLibVersion)
     compile(group: 'com.android.support', name: 'recyclerview-v7', version: supportLibVersion)
     compile 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'
+    compile 'us.feras.mdv:markdownview:1.1.0'
 }
