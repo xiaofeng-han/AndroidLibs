@@ -1,6 +1,53 @@
-FlowLayoutManager
-=======
-A RecyclerView layout manager that support flow layout
+FlowLayoutManager Readme
+===
+
+Overview
+===
+FlowLayoutManager is a layoutManager that works with Android ___RecyclerView___ Widget, to layout views in flow style, with support of ___predictive animations___, item per line limit, auto measurement & alignments (left or right)
+
+How to use
+===
+Basic setup
+---
+```java
+recyclerView.setLayoutManager(new FlowLayoutManager());
+
+```
+
+Predictive animation
+---
+No setup needed, when data changed, do not use notifyDatasetChanged, which will skip all animations, but use notifyItemXXX APIs, those APIs will trigger animations.
+
+Item per line limitation
+---
+Single item per line
+```java
+recyclerView.setLayoutManager(new FlowLayoutManager().singleItemPerLine());
+```
+or x items per line
+```java
+recyclerView.setLayoutManager(new FlowLayoutManager().maxItemsPerLine(x));
+```
+
+to remove Item per line limitation
+```java
+((FlowLayoutManager)recyclerView.getLayoutManager()).removeItemPerLineLimit();
+```
+
+Auto measurement
+---
+```java
+FlowLayoutManager flowLayoutManager = new FlowLayoutManager();
+flowLayoutManager.setAutoMeasureEnabled(true);
+recyclerView.setLayoutManager(flowLayoutManager);
+```
+
+Alignment
+---
+```java
+recyclerView.setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.LEFT));
+```
+Alignment could be LEFT or RIGHT.
 
 License
 =======
