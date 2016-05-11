@@ -33,11 +33,18 @@ public class TagAdapter extends RecyclerView.Adapter<TagViewHolder> {
 			@Override
 			public void onClick(View v) {
 				int adapterPosition = holder.getAdapterPosition();
-				List<String> newItems = DemoUtil.generate(2, 3, 14);
+				items.remove(adapterPosition);
+				notifyItemRemoved(adapterPosition);
+			}
+		});
+		holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				int adapterPosition = holder.getAdapterPosition();
+				List<String> newItems = DemoUtil.generate(1, 3, 14, true);
 				items.addAll(adapterPosition, newItems);
 				notifyItemRangeInserted(adapterPosition, newItems.size());
-//				items.remove(adapterPosition);
-//				notifyItemRemoved(adapterPosition);
+				return true;
 			}
 		});
 	}

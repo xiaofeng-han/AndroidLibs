@@ -29,15 +29,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <Spinner
-            android:id="@+id/spinner_items_per_line"
-            android:layout_width="wrap_content"
+        <GridLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"/>
-        <Spinner
-            android:id="@+id/spinner_alignment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:columnCount="2">
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@string/item_per_line_desc"
+                android:paddingRight="8dp"/>
+            <Spinner
+                android:id="@+id/spinner_items_per_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"/>
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@string/alignment_desc"
+                android:paddingRight="8dp"/>
+            <Spinner
+                android:id="@+id/spinner_alignment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </GridLayout>
+
+
 
     </LinearLayout>
     <android.support.v7.widget.RecyclerView

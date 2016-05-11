@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 		flowLayoutManager = new FlowLayoutManager().singleItemPerLine();
 		flowLayoutManager.setAutoMeasureEnabled(true);
 		recyclerView.setLayoutManager(flowLayoutManager);
-		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(2000, 3, 13)));
+		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(2000, 3, 13, false)));
 
 		markdownView = (MarkdownView)findViewById(R.id.instruction_mdown);
 		markdownView.loadMarkdownFile("file:///android_asset/instruction.md");

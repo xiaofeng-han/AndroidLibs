@@ -3,7 +3,7 @@
     <string name="line_option_one">One per line</string>
     <string name="line_option_two">Two per line</string>
     <string name="line_option_three">Three per line</string>
-    <string name="line_option_no">Remove limitation</string>
+    <string name="line_option_no">No limitation</string>
     <string-array name="item_per_line_options">
         <item>@string/line_option_one</item>
         <item>@string/line_option_two</item>
