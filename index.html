@@ -32,16 +32,79 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a id="flowlayoutmanager--demo-app" class="anchor" href="#flowlayoutmanager--demo-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>FlowLayoutManager &amp; Demo App</h1>
+<a id="flowlayoutmanager-readme" class="anchor" href="#flowlayoutmanager-readme" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>FlowLayoutManager Readme</h1>
 
-<p>This is home page of FlowLayoutManager &amp; It's Demo App. Please check <a href="https://youtu.be/eyCb1gYT9mA">feature video</a> for features.</p>
+<h1>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overview</h1>
 
-<p>Following is links to lib &amp; demo app</p>
+<p>FlowLayoutManager is a layoutManager that works with Android <strong><em>RecyclerView</em></strong> Widget, to layout views in flow style, with support of <strong><em>predictive animations</em></strong>, item per line limit, auto measurement &amp; alignments (left or right)</p>
 
-<ul>
-<li><a href="flowlayoutmanager">Flow LayoutManager</a></li>
-<li><a href="app">Demo Application</a></li>
-</ul>
+<h1>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use</h1>
+
+<h2>
+<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>setup</h2>
+
+<p>Add following to your build.gradle dependencies section</p>
+
+<div class="highlight highlight-source-groovy-gradle"><pre>compile <span class="pl-s"><span class="pl-pds">'</span>com.xiaofeng.android:flowlayoutmanager:1.2.3.2<span class="pl-pds">'</span></span></pre></div>
+
+<h2>
+<a id="basic-layout" class="anchor" href="#basic-layout" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Basic layout</h2>
+
+<div class="highlight highlight-source-java"><pre>recyclerView<span class="pl-k">.</span>setLayoutManager(<span class="pl-k">new</span> <span class="pl-smi">FlowLayoutManager</span>());</pre></div>
+
+<h2>
+<a id="predictive-animation" class="anchor" href="#predictive-animation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Predictive animation</h2>
+
+<p>No setup needed, when data changed, do not use notifyDatasetChanged, which will skip all animations, but use notifyItemXXX APIs, those APIs will trigger animations.</p>
+
+<h2>
+<a id="item-per-line-limitation" class="anchor" href="#item-per-line-limitation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Item per line limitation</h2>
+
+<p>Single item per line</p>
+
+<div class="highlight highlight-source-java"><pre>recyclerView<span class="pl-k">.</span>setLayoutManager(<span class="pl-k">new</span> <span class="pl-smi">FlowLayoutManager</span>()<span class="pl-k">.</span>singleItemPerLine());</pre></div>
+
+<p>or x items per line</p>
+
+<div class="highlight highlight-source-java"><pre>recyclerView<span class="pl-k">.</span>setLayoutManager(<span class="pl-k">new</span> <span class="pl-smi">FlowLayoutManager</span>()<span class="pl-k">.</span>maxItemsPerLine(x));</pre></div>
+
+<p>to remove Item per line limitation</p>
+
+<div class="highlight highlight-source-java"><pre>((<span class="pl-smi">FlowLayoutManager</span>)recyclerView<span class="pl-k">.</span>getLayoutManager())<span class="pl-k">.</span>removeItemPerLineLimit();</pre></div>
+
+<h2>
+<a id="auto-measurement" class="anchor" href="#auto-measurement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Auto measurement</h2>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">FlowLayoutManager</span> flowLayoutManager <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">FlowLayoutManager</span>();
+flowLayoutManager<span class="pl-k">.</span>setAutoMeasureEnabled(<span class="pl-c1">true</span>);
+recyclerView<span class="pl-k">.</span>setLayoutManager(flowLayoutManager);</pre></div>
+
+<h2>
+<a id="alignment" class="anchor" href="#alignment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Alignment</h2>
+
+<div class="highlight highlight-source-java"><pre>recyclerView<span class="pl-k">.</span>setLayoutManager(<span class="pl-k">new</span> <span class="pl-smi">FlowLayoutManager</span>()<span class="pl-k">.</span>setAlignment(<span class="pl-smi">Alignment</span><span class="pl-c1"><span class="pl-k">.</span>LEFT</span>));</pre></div>
+
+<p>Alignment could be LEFT or RIGHT.</p>
+
+<h1>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h1>
+
+<pre><code>Copyright 2016 Xiaofeng Han
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</code></pre>
       </section>
     </div>
 
