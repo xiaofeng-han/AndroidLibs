@@ -1,0 +1,3 @@
+- Tap on item to remove
+- Long tap on item to add an item in front of it
+- Generated items are random length of number, the length is appended at end
