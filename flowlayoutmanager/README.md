@@ -5,6 +5,10 @@ Overview
 ===
 FlowLayoutManager is a layoutManager that works with Android ___RecyclerView___ Widget, to layout views in flow style, with support of ___predictive animations___, item per line limit, auto measurement & alignments (left or right)
 
+[Google Play Link for Demo App](https://play.google.com/store/apps/details?id=com.xiaofeng.androidlibs)
+
+[Youtube Demo Video](https://youtu.be/eyCb1gYT9mA)
+
 ![Feature GIF](https://cloud.githubusercontent.com/assets/15362031/15170689/fe3117d6-16fc-11e6-8ffc-3e90b9bf5430.gif)
 How to use
 ===
