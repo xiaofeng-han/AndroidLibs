@@ -7,11 +7,17 @@ FlowLayoutManager is a layoutManager that works with Android ___RecyclerView___ 
 
 How to use
 ===
-Basic setup
+setup
+---
+Add following to your build.gradle dependencies section
+```gradle
+compile 'com.xiaofeng.android:flowlayoutmanager:1.2.3.2'
+```
+
+Basic layout
 ---
 ```java
 recyclerView.setLayoutManager(new FlowLayoutManager());
-
 ```
 
 Predictive animation
