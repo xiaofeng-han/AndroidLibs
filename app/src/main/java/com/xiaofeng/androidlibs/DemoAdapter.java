@@ -9,23 +9,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by xiaofeng on 1/5/16.
+ * Adapter for Demo item
  */
-public class TagAdapter extends RecyclerView.Adapter<TagViewHolder> {
+public class DemoAdapter extends RecyclerView.Adapter<DemoViewHolder> {
 	List<String> items;
 
-	public TagAdapter(List<String> items) {
+	public DemoAdapter(List<String> items) {
 		this.items = new ArrayList<>(items.size());
 		this.items.addAll(items);
 	}
 
 	@Override
-	public TagViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		return new TagViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_tag, parent, false));
+	public DemoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		return new DemoViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_tag, parent, false));
 	}
 
 	@Override
-	public void onBindViewHolder(final TagViewHolder holder, final int position) {
+	public void onBindViewHolder(final DemoViewHolder holder, final int position) {
 		holder.setTagText(items.get(position));
 		holder.tagSize.setClickable(false);
 		holder.tagText.setClickable(false);
@@ -41,7 +41,7 @@ public class TagAdapter extends RecyclerView.Adapter<TagViewHolder> {
 			@Override
 			public boolean onLongClick(View v) {
 				int adapterPosition = holder.getAdapterPosition();
-				List<String> newItems = DemoUtil.generate(1, 3, 14, true);
+				List<String> newItems = DemoUtil.generate(1, 3, 14, 1, true);
 				items.addAll(adapterPosition, newItems);
 				notifyItemRangeInserted(adapterPosition, newItems.size());
 				return true;

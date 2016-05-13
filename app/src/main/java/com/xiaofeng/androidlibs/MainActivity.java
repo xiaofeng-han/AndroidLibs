@@ -1,9 +1,13 @@
 package com.xiaofeng.androidlibs;
 
+import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.app_bar_main);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-
 		init();
 	}
 
@@ -67,7 +70,14 @@ public class MainActivity extends AppCompatActivity {
 		flowLayoutManager = new FlowLayoutManager().singleItemPerLine();
 		flowLayoutManager.setAutoMeasureEnabled(true);
 		recyclerView.setLayoutManager(flowLayoutManager);
-		recyclerView.setAdapter(new TagAdapter(DemoUtil.generate(2000, 3, 13, false)));
+		recyclerView.setAdapter(new DemoAdapter(DemoUtil.generate(2000, 3, 13, 1, false)));
+		recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+			@Override
+			public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+				super.getItemOffsets(outRect, view, parent, state);
+				outRect.set(5, 5, 5, 5);
+			}
+		});
 
 		markdownView = (MarkdownView)findViewById(R.id.instruction_mdown);
 		markdownView.loadMarkdownFile("file:///android_asset/instruction.md");
@@ -92,5 +102,20 @@ public class MainActivity extends AppCompatActivity {
 			flowLayoutManager.setAlignment(Alignment.RIGHT);
 		}
 		recyclerView.getAdapter().notifyItemRangeChanged(0, recyclerView.getAdapter().getItemCount());
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.action_settings) {
+			startActivity(new Intent(this, SettingsActivity.class));
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

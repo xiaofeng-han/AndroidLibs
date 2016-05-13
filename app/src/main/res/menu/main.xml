@@ -5,11 +5,5 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/two_per_line"
-        android:title="Two items per line"/>
-    <item
-        android:id="@+id/remove_item_limit"
-        android:title="Remove item per line count"/>
+        app:showAsAction="always"/>
 </menu>

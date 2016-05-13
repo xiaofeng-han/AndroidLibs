@@ -7,9 +7,9 @@ import android.widget.TextView;
 /**
  * Created by xiaofeng on 1/5/16.
  */
-public class TagViewHolder extends RecyclerView.ViewHolder {
+public class DemoViewHolder extends RecyclerView.ViewHolder {
 	TextView tagText, tagSize;
-	public TagViewHolder(View itemView) {
+	public DemoViewHolder(View itemView) {
 		super(itemView);
 		tagText = (TextView)itemView.findViewById(R.id.tag_text);
 		tagSize = (TextView)itemView.findViewById(R.id.tag_count);
