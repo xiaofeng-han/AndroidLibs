@@ -1,6 +1,7 @@
 package com.xiaofeng.androidlibs;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -22,13 +23,17 @@ import android.view.MenuItem;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatActivity {
+	GeneralPreferenceFragment generalPreferenceFragment;
 	/**
 	 * A preference value change listener that updates the preference's summary
 	 * to reflect its new value.
 	 */
-	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+	private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
+			if (preference.getKey().equals(SettingsActivity.this.getResources().getString(R.string.pref_key_items_per_line))) {
+				preference.setSummary(getResources().getString(R.string.pref_summary_items_per_line_template, value.toString()));
+			}
 			return true;
 		}
 	};
@@ -42,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
 	 *
 	 * @see #sBindPreferenceSummaryToValueListener
 	 */
-	private static void bindPreferenceSummaryToValue(Preference preference) {
+	private void bindPreferenceSummaryToValue(Preference preference) {
 		// Set the listener to watch for value changes.
 		preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
@@ -59,7 +64,14 @@ public class SettingsActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setupActionBar();
 		setContentView(R.layout.activity_settings);
-		getFragmentManager().beginTransaction().add(R.id.fragment_container, new GeneralPreferenceFragment(), "General Settings").commit();
+		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+			@Override
+			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+			}
+		});
+		generalPreferenceFragment = new GeneralPreferenceFragment();
+		getFragmentManager().beginTransaction().add(R.id.fragment_container, generalPreferenceFragment, "General Settings").commit();
 	}
 
 	/**
