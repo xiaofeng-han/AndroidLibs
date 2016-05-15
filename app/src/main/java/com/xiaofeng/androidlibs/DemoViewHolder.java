@@ -4,10 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-/**
- * Created by xiaofeng on 1/5/16.
- */
 public class DemoViewHolder extends RecyclerView.ViewHolder {
+	boolean showMeta = false;
 	TextView tagText, tagSize;
 	public DemoViewHolder(View itemView) {
 		super(itemView);
@@ -17,6 +15,33 @@ public class DemoViewHolder extends RecyclerView.ViewHolder {
 
 	public void setTagText(String tag) {
 		tagText.setText(tag);
-		tagSize.setText("(" + tag.length() + ")");
+		if (showMeta) {
+			String[] lines = tag.split("\n");
+			StringBuilder sb = new StringBuilder();
+			sb.append("(").append(lines.length).append(":");
+			int length = 0;
+			boolean first = true;
+			for (String line : lines) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(",");
+				}
+				sb.append(line.length());
+				length += line.length();
+			}
+			sb.append(":").append(length).append(")");
+			tagSize.setText(sb.toString());
+		}
+	}
+
+	public DemoViewHolder setShowMeta(boolean showMeta) {
+		this.showMeta = showMeta;
+		if (showMeta) {
+			tagSize.setVisibility(View.VISIBLE);
+		} else {
+			tagSize.setVisibility(View.GONE);
+		}
+		return this;
 	}
 }

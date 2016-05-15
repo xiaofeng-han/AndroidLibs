@@ -2,6 +2,7 @@ package com.xiaofeng.androidlibs;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -28,16 +29,20 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 			this.entries = entries;
 		}
 	}
-	private final Map<String, SummaryMapInfo> keySummaryInfoMap = new HashMap<String, SummaryMapInfo>();
+	private final Map<String, SummaryMapInfo> keySummaryInfoMap = new HashMap<>();
 
 	private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
-			if (preference instanceof ListPreference && keySummaryInfoMap.containsKey(preference.getKey())) {
+			if (keySummaryInfoMap.containsKey(preference.getKey())) {
 				SummaryMapInfo summaryMapInfo = keySummaryInfoMap.get(preference.getKey());
-				int index = ArrayUtil.indexOf(summaryMapInfo.values, value.toString());
-				if (index != ArrayUtil.NOT_FOUND) {
-					preference.setSummary(String.format(summaryMapInfo.summaryTemplate, summaryMapInfo.entries[index]));
+				if (preference instanceof ListPreference) {
+					int index = ArrayUtil.indexOf(summaryMapInfo.values, value.toString());
+					if (index != ArrayUtil.NOT_FOUND) {
+						preference.setSummary(String.format(summaryMapInfo.summaryTemplate, summaryMapInfo.entries[index]));
+					}
+				} else if (preference instanceof EditTextPreference) {
+					preference.setSummary(String.format(summaryMapInfo.summaryTemplate, value));
 				}
 			}
 			return true;
@@ -53,15 +58,17 @@ public class GeneralPreferenceFragment extends PreferenceFragment {
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		keySummaryInfoMap.put(getString(R.string.pref_key_items_per_line), new SummaryMapInfo(getString(R.string.pref_summary_items_per_line_template), getResources().getStringArray(R.array.pref_items_per_line_values), getResources().getStringArray(R.array.pref_items_per_line_entries)));
+		keySummaryInfoMap.put(getString(R.string.pref_key_max_items_per_line), new SummaryMapInfo(getString(R.string.pref_max_items_per_line_summary_template), getResources().getStringArray(R.array.pref_max_items_per_line_values), getResources().getStringArray(R.array.pref_max_items_per_line_entries)));
 		keySummaryInfoMap.put(getString(R.string.pref_key_alignment), new SummaryMapInfo(getString(R.string.pref_alignment_summary_template), getResources().getStringArray(R.array.pref_alignment_values), getResources().getStringArray(R.array.pref_alignment_entries)));
+		keySummaryInfoMap.put(getString(R.string.pref_key_max_lines_per_item), new SummaryMapInfo(getString(R.string.pref_max_lines_per_item_summary_template), null, null));
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_alignment)));
-		bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_items_per_line)));
+		bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_max_items_per_line)));
+		bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_max_lines_per_item)));
 	}
 
 	/**

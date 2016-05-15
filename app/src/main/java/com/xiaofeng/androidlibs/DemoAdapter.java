@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -13,15 +13,22 @@ import java.util.List;
  */
 public class DemoAdapter extends RecyclerView.Adapter<DemoViewHolder> {
 	List<String> items;
+	private int maxLinesPerItem;
+	private boolean showMeta = false;
+	public DemoAdapter() {
+		this.items = new LinkedList<>();
+		maxLinesPerItem = 1;
+	}
 
-	public DemoAdapter(List<String> items) {
-		this.items = new ArrayList<>(items.size());
+	public DemoAdapter(int maxLinesPerItem, List<String> items) {
+		this();
 		this.items.addAll(items);
+		this.maxLinesPerItem = maxLinesPerItem;
 	}
 
 	@Override
 	public DemoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		return new DemoViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_tag, parent, false));
+		return new DemoViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_tag, parent, false)).setShowMeta(showMeta);
 	}
 
 	@Override
@@ -41,7 +48,7 @@ public class DemoAdapter extends RecyclerView.Adapter<DemoViewHolder> {
 			@Override
 			public boolean onLongClick(View v) {
 				int adapterPosition = holder.getAdapterPosition();
-				List<String> newItems = DemoUtil.generate(1, 3, 14, 1, true);
+				List<String> newItems = DemoUtil.generate(1, 3, 14, maxLinesPerItem, true);
 				items.addAll(adapterPosition, newItems);
 				notifyItemRangeInserted(adapterPosition, newItems.size());
 				return true;
@@ -52,5 +59,19 @@ public class DemoAdapter extends RecyclerView.Adapter<DemoViewHolder> {
 	@Override
 	public int getItemCount() {
 		return items.size();
+	}
+
+	public void newItems(int maxLinesPerItem, List<String> newItems) {
+		this.maxLinesPerItem = maxLinesPerItem;
+		items.clear();
+		items.addAll(newItems);
+	}
+
+	public int getMaxLinesPerItem() {
+		return maxLinesPerItem;
+	}
+
+	public void setShowMeta(boolean showMeta) {
+		this.showMeta = showMeta;
 	}
 }

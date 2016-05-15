@@ -6,10 +6,21 @@
         android:entries="@array/pref_alignment_entries"
         android:entryValues="@array/pref_alignment_values"/>
     <ListPreference
-        android:key="@string/pref_key_items_per_line"
-        android:title="@string/pref_title_items_per_line"
-        android:defaultValue="@string/pref_items_per_line_default"
-        android:summary="@string/pref_summary_items_per_line"
-        android:entries="@array/pref_items_per_line_entries"
-        android:entryValues="@array/pref_items_per_line_values"/>
+        android:key="@string/pref_key_max_items_per_line"
+        android:title="@string/pref_title_max_items_per_line"
+        android:defaultValue="@string/pref_max_items_per_line_default"
+        android:entries="@array/pref_max_items_per_line_entries"
+        android:entryValues="@array/pref_max_items_per_line_values"/>
+    <EditTextPreference
+        android:key="@string/pref_key_max_lines_per_item"
+        android:title="@string/pref_max_lines_per_item_title"
+        android:defaultValue="@string/pref_max_lines_per_item_default"
+        android:inputType="numberDecimal"/>
+    <!--<SwitchPreference-->
+        <!--android:key="@string/pref_key_show_meta"-->
+        <!--android:title="@string/pref_show_meta_title"-->
+        <!--android:defaultValue="@bool/pref_show_meta_default"-->
+        <!--android:summaryOn="@string/pref_show_meta_summary_on"-->
+        <!--android:summaryOff="@string/pref_show_meta_summary_off"/>-->
+
 </PreferenceScreen>

@@ -1,9 +1,9 @@
 package com.xiaofeng.androidlibs;
 
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
@@ -23,41 +23,6 @@ import android.view.MenuItem;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatActivity {
-	GeneralPreferenceFragment generalPreferenceFragment;
-	/**
-	 * A preference value change listener that updates the preference's summary
-	 * to reflect its new value.
-	 */
-	private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-		@Override
-		public boolean onPreferenceChange(Preference preference, Object value) {
-			if (preference.getKey().equals(SettingsActivity.this.getResources().getString(R.string.pref_key_items_per_line))) {
-				preference.setSummary(getResources().getString(R.string.pref_summary_items_per_line_template, value.toString()));
-			}
-			return true;
-		}
-	};
-
-	/**
-	 * Binds a preference's summary to its value. More specifically, when the
-	 * preference's value is changed, its summary (line of text below the
-	 * preference title) is updated to reflect the value. The summary is also
-	 * immediately updated upon calling this method. The exact display format is
-	 * dependent on the type of preference.
-	 *
-	 * @see #sBindPreferenceSummaryToValueListener
-	 */
-	private void bindPreferenceSummaryToValue(Preference preference) {
-		// Set the listener to watch for value changes.
-		preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-		// Trigger the listener immediately with the preference's
-		// current value.
-		sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-				PreferenceManager
-						.getDefaultSharedPreferences(preference.getContext())
-						.getString(preference.getKey(), ""));
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 			}
 		});
-		generalPreferenceFragment = new GeneralPreferenceFragment();
-		getFragmentManager().beginTransaction().add(R.id.fragment_container, generalPreferenceFragment, "General Settings").commit();
+		getFragmentManager().beginTransaction().add(R.id.fragment_container, new GeneralPreferenceFragment(), "General Settings").commit();
 	}
 
 	/**
@@ -93,6 +57,10 @@ public class SettingsActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.done) {
+			setResult(Activity.RESULT_OK);
+			finish();
+		}
 		return super.onOptionsItemSelected(item);
 	}
 }

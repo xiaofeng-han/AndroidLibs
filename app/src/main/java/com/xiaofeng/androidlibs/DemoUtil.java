@@ -10,12 +10,12 @@ import java.util.Random;
 public class DemoUtil {
 	private static final Random random = new Random();
 	private static final String STRING_BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	public static List<String> generate(int total, int minLen, int maxLen, int maxLines, boolean randomOrder) {
+	public static List<String> generate(int total, int minLen, int maxLen, int maxLinesPerItem, boolean randomOrder) {
 		ArrayList<String> result = new ArrayList<>(total);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < total; i ++) {
 			sb.setLength(0);
-			int lineCount = random.nextInt(maxLines) + 1;
+			int lineCount = random.nextInt(maxLinesPerItem) + 1;
 			List<String> lines = generate(lineCount, minLen, maxLen, randomOrder);
 			boolean firstLine = true;
 			for (String line : lines) {

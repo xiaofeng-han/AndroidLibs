@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="pref_key_alignment">pref_key_align</string>
-    <string name="pref_key_items_per_line">pref_key_items_per_line</string>
+    <string name="pref_key_max_items_per_line">pref_key_max_items_per_line</string>
+    <string name="pref_key_max_lines_per_item">pref_key_max_lines_per_item</string>
+    <string name="pref_key_show_meta">pref_key_show_meta</string>
 </resources>
