@@ -1,2 +1,2 @@
 - Tap on item to remove
-- Long tap on item to add an item in front of it
+- Long press on item to add an item in front of it
