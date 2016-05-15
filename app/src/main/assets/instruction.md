@@ -1,3 +1,2 @@
 - Tap on item to remove
 - Long tap on item to add an item in front of it
-- String in brackets: (line count: character count per line,:total character count)
