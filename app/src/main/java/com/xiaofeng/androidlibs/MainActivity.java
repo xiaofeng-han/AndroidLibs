@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 	FlowLayoutManager flowLayoutManager;
 	MarkdownView markdownView;
 	private static final int REQ_CODE_SETTINGS = 101;
+	private boolean settingChanged = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -99,12 +98,23 @@ public class MainActivity extends AppCompatActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQ_CODE_SETTINGS) {
-			new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					loadSettingsFromSharedPref();
-				}
-			}, 1000);
+			settingChanged = true;
+		}
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			if (settingChanged) {
+				settingChanged = false;
+				recyclerView.post(new Runnable() {
+					@Override
+					public void run() {
+						loadSettingsFromSharedPref();
+					}
+				});
+			}
 		}
 	}
 }
