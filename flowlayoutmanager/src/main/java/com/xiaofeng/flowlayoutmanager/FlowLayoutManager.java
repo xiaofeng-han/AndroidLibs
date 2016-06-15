@@ -351,6 +351,11 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
 	/**
 	 * Add new line of elements at top, to keep layout, have to virtually layout from beginning.
+	 * Here is an example to explain why: Say total width is 10, current line is [5, 2, 1], 3 numbers
+	 * before current line is 7, 2, 6. If you just look back, you could say previous line [2, 6], but there
+	 * is another possibility: [7, 2], [6]. You don't know which one is correct without knowing how the line
+	 * before previous one, same thing could happen to that line too, so you have to sort everything from beginning
+	 * or cache the result.
 	 */
 	private void addNewLineAtTop(RecyclerView.Recycler recycler) {
 		int x = layoutStartPoint().x, bottom = getDecoratedTop(getChildAt(getMaxHeightLayoutPositionInLine(0))), y;
