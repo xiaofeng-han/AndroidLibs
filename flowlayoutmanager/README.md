@@ -1,6 +1,8 @@
 FlowLayoutManager Readme
 ===
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-FlowLayoutManager-green.svg?style=true)](https://android-arsenal.com/details/1/3733)
+
 Overview
 ===
 FlowLayoutManager is a layoutManager that works with Android ___RecyclerView___ Widget, to layout views in flow style, with support of ___predictive animations___, item per line limit, auto measurement & alignments (left or right)
