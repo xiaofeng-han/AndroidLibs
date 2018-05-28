@@ -3,6 +3,7 @@ package com.xiaofeng.flowlayoutmanager;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -29,6 +30,9 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 	FlowLayoutOptions newFlowLayoutOptions;
 	LayoutHelper layoutHelper;
 	CacheHelper cacheHelper;
+	@Nullable
+	private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener;
+
 	public FlowLayoutManager() {
 		flowLayoutOptions = new FlowLayoutOptions();
 		newFlowLayoutOptions = FlowLayoutOptions.clone(flowLayoutOptions);
@@ -468,15 +472,28 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 		layoutHelper = new LayoutHelper(this, recyclerView);
 		cacheHelper = new CacheHelper(flowLayoutOptions.itemsPerLine, layoutHelper.visibleAreaWidth());
 		if (layoutHelper.visibleAreaWidth() == 0) {
-			view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-				@Override
-				public void onGlobalLayout() {
-					view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-					cacheHelper.contentAreaWidth(layoutHelper.visibleAreaWidth());
-				}
-			});
+			if (globalLayoutListener == null) {
+				globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+					@Override
+					public void onGlobalLayout() {
+						view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+						globalLayoutListener = null;
+						cacheHelper.contentAreaWidth(layoutHelper.visibleAreaWidth());
+					}
+				};
+			}
+			view.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener);
 		}
 
+	}
+
+	@Override
+	public void onDetachedFromWindow(RecyclerView view, RecyclerView.Recycler recycler) {
+		super.onDetachedFromWindow(view, recycler);
+		if (globalLayoutListener != null) {
+			view.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+			globalLayoutListener = null;
+		}
 	}
 
 	@Override
