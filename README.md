@@ -125,8 +125,10 @@ I thank all the authors of the various commits that I have included in my fork, 
 The project builds with Gradle 9 / AGP 9 and JDK 17:
 
 ```bash
-./gradlew :flowlayoutmanager:assembleRelease :app:assembleDebug
+./gradlew :flowlayoutmanager:testDebugUnitTest :flowlayoutmanager:assembleRelease :app:assembleDebug
 ```
+
+Unit tests run on the JVM with [Robolectric](https://robolectric.org), so no emulator is needed.
 
 `minSdk` is set once by `MIN_SDK` in `gradle.properties` for both the library and the sample app, and it is kept as low as the dependencies allow: the sample uses only framework widgets and RecyclerView for this reason. A dependency update that requires a higher `minSdk` makes the build fail (manifest merger), so it never raises it silently.
 

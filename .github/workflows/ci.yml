@@ -53,7 +53,7 @@ jobs:
           echo "### Version \`$VERSION\`" >> "$GITHUB_STEP_SUMMARY"
 
   build:
-    name: Build library & sample app
+    name: Test & build library & sample app
     runs-on: ubuntu-latest
     needs: [version]
     env:
@@ -83,11 +83,21 @@ jobs:
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
           echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
 
+      - name: Test
+        run: ./gradlew :flowlayoutmanager:testDebugUnitTest
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: flowlayoutmanager/build/reports/tests/
+          if-no-files-found: ignore
+
       - name: Build
         run: |
           ./gradlew \
             :flowlayoutmanager:assembleRelease \
-            :flowlayoutmanager:assembleDebugAndroidTest \
             :flowlayoutmanager:publishToMavenLocal \
             :app:assembleDebug \
             :app:assembleRelease

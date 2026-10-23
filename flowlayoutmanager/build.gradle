@@ -12,7 +12,11 @@ android {
 
     defaultConfig {
         minSdk = MIN_SDK as int
-        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    testOptions {
+        // Unit tests run on the JVM with Robolectric, no emulator needed.
+        unitTests.includeAndroidResources = true
     }
 
     compileOptions {
@@ -31,8 +35,9 @@ dependencies {
     // FlowLayoutManager extends RecyclerView.LayoutManager, so RecyclerView is part of the public API.
     api libs.androidx.recyclerview
 
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.androidx.test.runner
+    testImplementation libs.junit
+    testImplementation libs.androidx.test.ext.junit
+    testImplementation libs.robolectric
 }
 
 afterEvaluate {
