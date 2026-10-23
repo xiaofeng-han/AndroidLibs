@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # Gradle (version catalog, plugins and wrapper)
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    open-pull-requests-limit: 10
+    groups:
+      gradle:
+        patterns:
+          - "*" # Prefer a single PR per dependency update round.
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    open-pull-requests-limit: 10
+    groups:
+      github-actions:
+        patterns:
+          - "*"
