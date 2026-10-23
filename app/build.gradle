@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = 'com.xiaofeng.androidlibs'
-        minSdk = 23
+        minSdk = MIN_SDK as int
         targetSdk = 37
         versionCode = VERSION_CODE as int
         versionName = VERSION_NAME
@@ -43,7 +43,4 @@ android {
 
 dependencies {
     implementation project(':flowlayoutmanager')
-    implementation libs.androidx.appcompat
-    implementation libs.androidx.constraintlayout
-    implementation libs.material
 }

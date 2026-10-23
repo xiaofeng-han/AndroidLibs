@@ -128,6 +128,8 @@ The project builds with Gradle 9 / AGP 9 and JDK 17:
 ./gradlew :flowlayoutmanager:assembleRelease :app:assembleDebug
 ```
 
+`minSdk` is set once by `MIN_SDK` in `gradle.properties` for both the library and the sample app, and it is kept as low as the dependencies allow: the sample uses only framework widgets and RecyclerView for this reason. A dependency update that requires a higher `minSdk` makes the build fail (manifest merger), so it never raises it silently.
+
 CI builds the library AAR and the sample APK on every pull request; on `master` it also tags and releases the version set by `VERSION_NAME` in `gradle.properties` (bump it to release).
 
 

@@ -1,22 +1,23 @@
 package com.xiaofeng.androidlibs;
 
+import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.xiaofeng.flowlayoutmanager.Alignment;
 import com.xiaofeng.flowlayoutmanager.FlowLayoutManager;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Demo of FlowLayoutManager. It uses only framework widgets and RecyclerView, so that the sample
+ * runs on the same minSdk as the library.
+ */
+public class MainActivity extends Activity {
 
     private static final int DEMO_MAX_LINES = 3;
 
@@ -30,41 +31,24 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private final NavigationBarView.OnItemSelectedListener onItemSelectedListener
-            = new NavigationBarView.OnItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            // Resource ids are not final in AGP 8+, so they cannot be used in a switch.
-            int itemId = item.getItemId();
-            if (itemId == R.id.navigation_left) {
-                setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.LEFT));
-                return true;
-            } else if (itemId == R.id.navigation_center) {
-                setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.CENTER));
-                return true;
-            } else if (itemId == R.id.navigation_right) {
-                setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.RIGHT));
-                return true;
-            } else if (itemId == R.id.navigation_max_lines) {
-                setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.LEFT).maxLines(DEMO_MAX_LINES));
-                return true;
-            }
-            return false;
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnItemSelectedListener(onItemSelectedListener);
         recyclerView = findViewById(R.id.list);
         recyclerView.setAdapter(new DemoAdapter(DemoUtil.listWords()));
         recyclerView.addItemDecoration(itemDecoration);
         setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.LEFT));
+
+        findViewById(R.id.navigation_left).setOnClickListener(v ->
+                setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.LEFT)));
+        findViewById(R.id.navigation_center).setOnClickListener(v ->
+                setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.CENTER)));
+        findViewById(R.id.navigation_right).setOnClickListener(v ->
+                setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.RIGHT)));
+        findViewById(R.id.navigation_max_lines).setOnClickListener(v ->
+                setLayoutManager(new FlowLayoutManager().setAlignment(Alignment.LEFT).maxLines(DEMO_MAX_LINES)));
     }
 
     private void setLayoutManager(FlowLayoutManager layoutManager) {
