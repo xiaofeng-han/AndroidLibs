@@ -19,6 +19,10 @@ public class LayoutHelper {
 		return layoutOptions.itemsPerLine > 0;
 	}
 
+	public static boolean hasMaxLinesLimit(FlowLayoutOptions layoutOptions) {
+		return layoutOptions.maxLines > 0;
+	}
+
 	public static boolean shouldStartNewline(int x, int childWidth, int leftEdge, int rightEdge, LayoutContext layoutContext) {
 		if (hasItemsPerLineLimit(layoutContext.layoutOptions) && layoutContext.currentLineItemCount == layoutContext.layoutOptions.itemsPerLine) {
 			return true;

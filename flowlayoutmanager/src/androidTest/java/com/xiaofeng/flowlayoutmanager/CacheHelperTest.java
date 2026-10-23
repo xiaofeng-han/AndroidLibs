@@ -1,11 +1,12 @@
 package com.xiaofeng.flowlayoutmanager;
 
 import android.graphics.Point;
-import android.test.InstrumentationTestCase;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.xiaofeng.flowlayoutmanager.cache.CacheHelper;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -13,7 +14,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by xhan on 4/27/16.
  */
-public class CacheHelperTest extends InstrumentationTestCase {
+@RunWith(AndroidJUnit4.class)
+public class CacheHelperTest {
 	@Test
 	public void testLineCountsNoLimit() throws Exception {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
@@ -56,6 +58,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line 4 have 2 items", lineCounts[4], is(2));
 	}
 
+	@Test
 	public void testItemLineIndex() {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
@@ -76,6 +79,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("9th item have line index -1", cacheHelper.itemLineIndex(8), is(CacheHelper.NOT_FOUND));
 	}
 
+	@Test
 	public void testHavePreviousLineCached() {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
@@ -95,6 +99,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("9th item do not have previous line cached", cacheHelper.hasPreviousLineCached(9), is(false));
 	}
 
+	@Test
 	public void testHaveNextLineCached() {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
@@ -113,6 +118,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("9th item do not have next line cached", cacheHelper.hasNextLineCached(9), is(false));
 	}
 
+	@Test
 	public void testRemoveMiddle() {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = 2;
@@ -153,6 +159,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line 3 have 1 items", lineCounts[2], is(2));
 	}
 
+	@Test
 	public void testAdd() throws Exception {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
@@ -183,6 +190,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line 5 have 1 items", lineCounts[4], is(1));
 	}
 
+	@Test
 	public void testRemoveMultiple() throws Exception {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
@@ -207,6 +215,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line 2 have 3 items", lineCounts[1], is(3));
 	}
 
+	@Test
 	public void testInvalidateSize() throws Exception {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
@@ -232,6 +241,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line 2 have 2 items", lineCounts[1], is(2));
 	}
 
+	@Test
 	public void testOnItemInserted() throws Exception {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
@@ -255,6 +265,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line 2 have 1 items", lineCounts[1], is(1));
 	}
 
+	@Test
 	public void testRemoveBeyondEnd() throws Exception {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
@@ -278,6 +289,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line 2 have 3 items", lineCounts[1], is(3));
 	}
 
+	@Test
 	public void testMoveForward() throws Exception {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
@@ -304,6 +316,7 @@ public class CacheHelperTest extends InstrumentationTestCase {
 		assertThat("line 3 have 1 items", lineCounts[2], is(1));
 	}
 
+	@Test
 	public void testMoveBackward() throws Exception {
 		FlowLayoutOptions layoutOptions = new FlowLayoutOptions();
 		layoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;

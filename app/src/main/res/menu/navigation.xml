@@ -12,7 +12,12 @@
         android:title="@string/center" />
 
     <item
-        android:id="@+id/navigation_rigth"
+        android:id="@+id/navigation_right"
         android:icon="@drawable/ic_format_align_right_black_24dp"
-        android:title="@string/rigth" />
+        android:title="@string/right" />
+
+    <item
+        android:id="@+id/navigation_max_lines"
+        android:icon="@drawable/ic_short_text_black_24dp"
+        android:title="@string/max_lines" />
 </menu>

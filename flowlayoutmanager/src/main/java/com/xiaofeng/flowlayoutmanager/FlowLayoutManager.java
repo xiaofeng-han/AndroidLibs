@@ -35,9 +35,19 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
     private CacheHelper cacheHelper;
     @Nullable
     private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener;
+    // number of items that fit in the first maxLines lines, refreshed on every real layout.
+    private int maxLinesItemCount = Integer.MAX_VALUE;
 
     public FlowLayoutManager() {
         flowLayoutOptions = new FlowLayoutOptions();
+    }
+
+    /**
+     * @param maxLines max number of lines to show, &lt;= 0 to show all lines.
+     */
+    public FlowLayoutManager(int maxLines) {
+        this();
+        flowLayoutOptions.maxLines = maxLines;
     }
 
     @Override
@@ -91,6 +101,8 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
         LayoutContext afterContext = LayoutContext.clone(beforeContext);
         afterContext.layoutOptions.itemsPerLine = flowLayoutOptions.itemsPerLine;
 
+        int realLineCount = 0;
+
         // track before removed and after removed layout in same time, to make sure only add items at
         // bottom that visible after item removed.
         while (currentItemPosition < state.getItemCount()) {
@@ -112,6 +124,13 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
             if (!childRemoved) {
                 realNewline = calcChildLayoutRect(child, realX, realY, realHeight, afterContext, realRect);
+                if (realLineCount == 0 || realNewline) {
+                    realLineCount++;
+                }
+                if (LayoutHelper.hasMaxLinesLimit(flowLayoutOptions) && realLineCount > flowLayoutOptions.maxLines) {
+                    recycler.recycleView(child);
+                    break;
+                }
                 if (realNewline) {
                     point = startNewline(realRect, afterContext);
                     realX = point.x;
@@ -143,9 +162,14 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
 
     private void onRealLayoutChildren(RecyclerView.Recycler recycler) {
         detachAndScrapAttachedViews(recycler);
+        maxLinesItemCount = countItemsInMaxLines(recycler);
         Point startPoint = layoutStartPoint();
         int x = startPoint.x, y = startPoint.y;
-        int itemCount = getItemCount();
+        int itemCount = layoutItemCount();
+        if (firstChildAdapterPosition >= itemCount) {
+            // e.g. max lines reduced after scrolling, restart from top.
+            firstChildAdapterPosition = 0;
+        }
         int height = 0;
         boolean newLine;
         Rect rect = new Rect();
@@ -218,7 +242,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
             View lastChild = getChildAt(getChildCount() - 1);
             View bottomChild = getChildAt(getMaxHeightLayoutPositionInLine(getChildCount() - 1));
 
-            return !(getChildAdapterPosition(lastChild) == recyclerView.getAdapter().getItemCount() - 1
+            return !(getChildAdapterPosition(lastChild) == layoutItemCount() - 1
                     && (bottomChild != null && getDecoratedBottom(bottomChild) <= bottomVisibleEdge()));
         }
     }
@@ -243,7 +267,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
             }
         }
 
-        if (getChildAdapterPosition(lastChild) == recyclerView.getAdapter().getItemCount() - 1) {
+        if (getChildAdapterPosition(lastChild) == layoutItemCount() - 1) {
             if (getDecoratedBottom(bottomChild) <= bottomVisibleEdge()) {
                 bottomReached = true;
             }
@@ -309,7 +333,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
         int maxHeightIndex = getMaxHeightLayoutPositionInLine(getChildCount() - 1);
         View maxHeightItem = getChildAt(maxHeightIndex);
         int offscreenBottom = getDecoratedBottom(maxHeightItem) - (getClipToPadding() ? bottomVisibleEdge() : getHeight());
-        while (offscreenBottom < dy && getChildAdapterPosition(getChildCount() - 1) < getItemCount() - 1) {
+        while (offscreenBottom < dy && getChildAdapterPosition(getChildCount() - 1) < layoutItemCount() - 1) {
             addNewLineAtBottom(recycler);
             maxHeightIndex = getMaxHeightLayoutPositionInLine(getChildCount() - 1);
             maxHeightItem = getChildAt(maxHeightIndex);
@@ -453,8 +477,9 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
     private void addNewLineAtBottom(RecyclerView.Recycler recycler) {
         int x = layoutStartPoint().x, y = getDecoratedBottom(getChildAt(getMaxHeightLayoutPositionInLine(getChildCount() - 1)));
         int childAdapterPosition = getChildAdapterPosition(getChildCount() - 1) + 1;
+        int itemCount = layoutItemCount();
         // no item to add
-        if (childAdapterPosition == getItemCount()) {
+        if (childAdapterPosition >= itemCount) {
             return;
         }
         Rect rect = new Rect();
@@ -463,7 +488,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
         LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
         LinkedList<LayoutManagerAppender> appenders = new LinkedList<>();
 
-        while (childAdapterPosition < getItemCount()) {
+        while (childAdapterPosition < itemCount) {
             View newChild = recycler.getViewForPosition(childAdapterPosition);
             newline = calcChildLayoutRect(newChild, x, y, 0, layoutContext, rect);
             cacheHelper.setItem(childAdapterPosition, new Point(rect.width(), rect.height()));
@@ -770,6 +795,67 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
         return this;
     }
 
+    /**
+     * Show at most maxLines lines, items after the last line are not laid out.
+     */
+    public FlowLayoutManager maxLines(int maxLines) {
+        flowLayoutOptions.maxLines = maxLines;
+        requestLayout();
+        return this;
+    }
+
+    public FlowLayoutManager removeMaxLinesLimit() {
+        return maxLines(FlowLayoutOptions.MAX_LINES_NO_LIMIT);
+    }
+
+    /**
+     * Number of adapter items that can be laid out, that is all items unless max lines is limited.
+     */
+    private int layoutItemCount() {
+        if (!LayoutHelper.hasMaxLinesLimit(flowLayoutOptions)) {
+            return getItemCount();
+        }
+        return Math.min(getItemCount(), maxLinesItemCount);
+    }
+
+    /**
+     * Virtually layout items from the beginning to count how many of them fit in max lines.
+     */
+    private int countItemsInMaxLines(RecyclerView.Recycler recycler) {
+        int itemCount = getItemCount();
+        if (!LayoutHelper.hasMaxLinesLimit(flowLayoutOptions)) {
+            return itemCount;
+        }
+        Point startPoint = layoutStartPoint();
+        int x = startPoint.x, y = startPoint.y, height = 0;
+        int lineCount = 0;
+        Rect rect = new Rect();
+        LayoutContext layoutContext = LayoutContext.fromLayoutOptions(flowLayoutOptions);
+        for (int i = 0; i < itemCount; i++) {
+            View child = recycler.getViewForPosition(i);
+            boolean newline = calcChildLayoutRect(child, x, y, height, layoutContext, rect);
+            recycler.recycleView(child);
+            if (lineCount == 0 || newline) {
+                lineCount++;
+            }
+            if (lineCount > flowLayoutOptions.maxLines) {
+                return i;
+            }
+            if (newline) {
+                Point lineInfo = startNewline(rect, layoutContext);
+                x = lineInfo.x;
+                y = lineInfo.y;
+                height = rect.height();
+                layoutContext.currentLineItemCount = 1;
+            } else {
+                x = advanceInSameLine(x, rect, layoutContext);
+                height = Math.max(height, rect.height());
+                layoutContext.currentLineItemCount++;
+            }
+        }
+        return itemCount;
+    }
+
     public FlowLayoutManager removeItemPerLineLimit() {
         flowLayoutOptions.itemsPerLine = FlowLayoutOptions.ITEM_PER_LINE_NO_LIMIT;
 
@@ -953,7 +1039,7 @@ public class FlowLayoutManager extends RecyclerView.LayoutManager {
         }
 
 
-        return state.getItemCount();
+        return LayoutHelper.hasMaxLinesLimit(flowLayoutOptions) ? Math.min(state.getItemCount(), maxLinesItemCount) : state.getItemCount();
 
     }
 }
