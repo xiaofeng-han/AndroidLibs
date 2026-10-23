@@ -39,7 +39,7 @@ public class DemoAdapter extends RecyclerView.Adapter<DemoViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int adapterPosition = holder.getAdapterPosition();
+                int adapterPosition = holder.getBindingAdapterPosition();
                 if(adapterPosition >= 0 && adapterPosition < items.size()) {
                     items.remove(adapterPosition);
                     notifyItemRemoved(adapterPosition);
@@ -49,7 +49,7 @@ public class DemoAdapter extends RecyclerView.Adapter<DemoViewHolder> {
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                int adapterPosition = holder.getAdapterPosition();
+                int adapterPosition = holder.getBindingAdapterPosition();
                 if(adapterPosition >= 0 && adapterPosition < items.size()) {
                     List<String> newItems = DemoUtil.listWords();
                     items.addAll(adapterPosition, newItems);

@@ -1,37 +1,49 @@
-apply plugin: 'com.android.application'
+plugins {
+    alias(libs.plugins.android.application)
+}
 
 android {
-    compileSdkVersion androidCompileSdkVersion
-
-    buildToolsVersion buildToolsVersion
+    namespace = 'com.xiaofeng.androidlibs'
+    compileSdk = 37
 
     defaultConfig {
-        applicationId "com.xiaofeng.androidlibs"
-        minSdkVersion androidMinSdkVersion
-        targetSdkVersion androidTargetSdkVersion
-        versionCode versionCode
-        versionName versionName
-        vectorDrawables.useSupportLibrary = true
+        applicationId = 'com.xiaofeng.androidlibs'
+        minSdk = 23
+        targetSdk = 37
+        versionCode = VERSION_CODE as int
+        versionName = VERSION_NAME
     }
-    buildTypes {
+
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            def keystore = System.getenv('ANDROID_KEYSTORE_FILE')
+            if (keystore) {
+                storeFile = file(keystore)
+                storePassword = System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias = System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword = System.getenv('ANDROID_KEY_PASSWORD')
+            }
         }
     }
+
+    buildTypes {
+        release {
+            // Unsigned when no keystore is provided (e.g. pull requests and forks).
+            if (System.getenv('ANDROID_KEYSTORE_FILE')) {
+                signingConfig = signingConfigs.release
+            }
+        }
+    }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
-    implementation project(":flowlayoutmanager")
-
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation(group: 'com.google.android.material', name: 'material', version: supportLibVersion)
-    implementation(group: 'androidx.appcompat', name: 'appcompat', version: supportLibVersion)
-    implementation(group: 'androidx.recyclerview', name: 'recyclerview', version: supportLibVersion)
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation project(':flowlayoutmanager')
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.constraintlayout
+    implementation libs.material
 }

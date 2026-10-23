@@ -1,39 +1,47 @@
-// to publish run ./gradlew clean bintrayUpload
+plugins {
+    alias(libs.plugins.android.library)
+    id 'maven-publish'
+}
 
-apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
+group = 'com.github.simonebortolin'
+version = VERSION_NAME
 
 android {
-    compileSdkVersion androidCompileSdkVersion
-
-    buildToolsVersion buildToolsVersion
+    namespace = 'com.xiaofeng.flowlayoutmanager'
+    compileSdk = 37
 
     defaultConfig {
-        minSdkVersion androidMinSdkVersion
-        targetSdkVersion androidTargetSdkVersion
-        versionCode versionCode
-        versionName versionName
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        minSdk = 21
+        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
     }
-    testOptions {
-        unitTests.returnDefaultValues = false
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
     }
 }
 
 dependencies {
-    implementation(group: 'androidx.appcompat', name: 'appcompat', version: supportLibVersion)
-    implementation(group: 'androidx.recyclerview', name: 'recyclerview', version: supportLibVersion)
+    // FlowLayoutManager extends RecyclerView.LayoutManager, so RecyclerView is part of the public API.
+    api libs.androidx.recyclerview
+
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.androidx.test.runner
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                artifactId = 'FlowLayoutManager'
+            }
+        }
+    }
+}
